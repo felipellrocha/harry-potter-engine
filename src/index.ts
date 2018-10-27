@@ -1,4 +1,4 @@
-import { newNetwork } from './network';
+import { newNetwork } from './neural/network';
 
 const network = newNetwork([5, 3, 2]);
 
