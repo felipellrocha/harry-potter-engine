@@ -11,8 +11,6 @@ export interface Thinkable {
   value: number,
   error: number,
 
-  bias?: Neuron,
-
   left: Edges,
   right: Edges,
 }
@@ -32,4 +30,5 @@ export interface Network {
 
   learningRate: number,
   forward(): Iterable<Neuron>,
+  backward(): Iterable<Neuron>,
 }

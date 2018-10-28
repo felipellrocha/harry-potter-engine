@@ -1,4 +1,6 @@
-import { Network, BIAS, Neuron } from './types';
+import { Network, Neuron } from './types';
+
+import { networkIterator } from './iterators';
 
 import { newSigmoid, newBias } from './neuron';
 import { newConnection } from './connection';
@@ -22,6 +24,7 @@ const fullyConnectNetwork = (neurons: Neuron[][], bias: Neuron): void => {
   }
 }
 
+
 export const newNetwork = (
   layers: number[],
   learningRate: number = 0.5,
@@ -38,38 +41,7 @@ export const newNetwork = (
     inputs: neurons[0],
     outputs: neurons[layers.length - 1],
     learningRate,
-    forward(): Iterable<Neuron> {
-      return {
-        [Symbol.iterator]: () => {
-          const queue: Neuron[] = [...this.inputs];
-          const viewed: Set<Neuron> = new Set();
-
-          const iterator: Iterator<Neuron> = {
-            next() {
-              const pop = queue.pop();
-
-              if (!pop) return {
-                done: true,
-                value: undefined,
-              }
-
-              viewed.add(pop);
-
-              for (let [neuron, _] of pop.right) {
-                if (!viewed.has(neuron) && neuron.id !== BIAS) {
-                  queue.push(neuron);
-                }
-              }
-
-              return {
-                done: false,
-                value: pop,
-              };
-            }
-          }
-          return iterator
-        }
-      }
-    },
+    forward: networkIterator("inputs", "right"),
+    backward: networkIterator("outputs", "left"),
   }
 }
