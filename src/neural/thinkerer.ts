@@ -1,8 +1,7 @@
 import { Thinkerer, Neuron } from "./types";
 
-export const newRegularThinkerer = (): Thinkerer => {
-
-  const activate = (neuron: Neuron): void => {
+export const newRegularThinkerer: Thinkerer = {
+  activate: (neuron: Neuron): void => {
     let value: number = 0.0;
 
     for (let [prev, connection] of neuron.left.entries()) {
@@ -11,6 +10,4 @@ export const newRegularThinkerer = (): Thinkerer => {
 
     neuron.value = neuron.activation(value);
   }
-
-  return { activate };
-}
+};

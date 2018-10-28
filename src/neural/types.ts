@@ -4,10 +4,14 @@ export interface Connection {
   weight: number,
 }
 
+export const BIAS = 'bias';
+
 export interface Thinkable {
   id: string,
   value: number,
   error: number,
+
+  bias?: Neuron,
 
   left: Edges,
   right: Edges,
@@ -27,4 +31,5 @@ export interface Network {
   outputs: Neuron[],
 
   learningRate: number,
+  forward(): Iterable<Neuron>,
 }

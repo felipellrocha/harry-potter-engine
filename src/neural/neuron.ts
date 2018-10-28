@@ -1,4 +1,4 @@
-import { Neuron } from './types';
+import { BIAS, Neuron } from './types';
 import { newThinkable } from './thinkable';
 import { newRegularThinkerer } from './thinkerer';
 
@@ -9,7 +9,7 @@ export const newSigmoid = (): Neuron => {
 
   return {
     ...newThinkable(),
-    ...newRegularThinkerer(),
+    ...newRegularThinkerer,
     activation,
     derivative,
   }
@@ -22,7 +22,7 @@ export const newBias = (): Neuron => {
 
   return {
     ...newThinkable(),
-    id: "bias",
+    id: BIAS,
     value: 1,
     error: 0,
 
