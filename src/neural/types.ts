@@ -19,10 +19,12 @@ export interface Thinkerer {
   activate(neuron: Neuron): void,
 }
 
-export interface Neuron extends Thinkable, Thinkerer {
+export interface Activator {
   activation(value: number): number,
   derivative(value: number): number,
 }
+
+export interface Neuron extends Thinkable, Thinkerer, Activator { }
 
 export interface Network {
   inputs: Neuron[],
@@ -31,4 +33,7 @@ export interface Network {
   learningRate: number,
   forward(): Iterable<Neuron>,
   backward(): Iterable<Neuron>,
+  output(): number[],
+  inspect(): number[],
+  setInput(values: number[]): void,
 }

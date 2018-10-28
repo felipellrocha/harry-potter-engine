@@ -18,7 +18,7 @@ export const newSigmoid = (): Neuron => {
 export const newBias = (): Neuron => {
   const activation = (value: number): number => value;
   const derivative = (value: number): number => value;
-  const activate = (neuron: Neuron): void => { };
+  const activate = (): void => { };
 
   return {
     ...newThinkable(),

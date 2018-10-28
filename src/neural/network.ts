@@ -35,7 +35,6 @@ export const newNetwork = (
   const bias = newBias();
 
   fullyConnectNetwork(neurons, bias);
-  console.log(this);
 
   return {
     inputs: neurons[0],
@@ -43,5 +42,12 @@ export const newNetwork = (
     learningRate,
     forward: networkIterator("inputs", "right"),
     backward: networkIterator("outputs", "left"),
+    output() { return this.outputs.map((neuron: Neuron) => neuron.value) },
+    inspect() { return this.inputs.map((neuron: Neuron) => neuron.value) },
+    setInput(values: number[]) {
+      for (let index of this.inputs.keys()) {
+        this.inputs[index].value = values[index];
+      }
+    }
   }
 }
