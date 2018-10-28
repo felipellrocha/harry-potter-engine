@@ -5,30 +5,42 @@ export const networkIterator =
     function (): Iterable<Neuron> {
       return {
         [Symbol.iterator]: () => {
-          const queue: Neuron[] = [...this[neuronsKey]];
+          const queue: Neuron[] = [];
           const viewed: Set<Neuron> = new Set();
+
+          // Skip first layer of neurons
+          // This is necessary both ways
+          for (let item of this[neuronsKey]) {
+            viewed.add(item);
+
+            for (let [neuron, _] of item[directionKey]) {
+              if (!viewed.has(neuron) && neuron.id !== BIAS) {
+                viewed.add(neuron);
+                queue.push(neuron);
+              }
+            }
+          }
 
           const iterator: Iterator<Neuron> = {
             next() {
-              const pop = queue.pop();
+              const item = queue.shift();
 
-              if (!pop) return {
+              if (!item) return {
                 done: true,
                 value: undefined,
               }
 
-              viewed.add(pop);
-
               // @ts-ignore
-              for (let [neuron, _] of pop[directionKey]) {
+              for (let [neuron, _] of item[directionKey]) {
                 if (!viewed.has(neuron) && neuron.id !== BIAS) {
+                  viewed.add(neuron);
                   queue.push(neuron);
                 }
               }
 
               return {
                 done: false,
-                value: pop,
+                value: item,
               };
             }
           }

@@ -30,7 +30,7 @@ export const newNetwork = (
   learningRate: number = 0.5,
 ): Network => {
 
-  const neurons = layers.map(layer => [...new Array(layer)].map(_ => newSigmoid()));
+  const neurons = layers.map(layer => [...new Array(layer)].map(_ => { return newSigmoid() }));
 
   const bias = newBias();
 
@@ -43,11 +43,27 @@ export const newNetwork = (
     forward: networkIterator("inputs", "right"),
     backward: networkIterator("outputs", "left"),
     output() { return this.outputs.map((neuron: Neuron) => neuron.value) },
-    inspect() { return this.inputs.map((neuron: Neuron) => neuron.value) },
+    inspect() {
+      const inputs = this.inputs.map((neuron: Neuron) => neuron.value);
+      const outputs = this.outputs.map((neuron: Neuron) => neuron.value);
+      return [inputs, outputs];
+    },
+    learn(values: number[], answers: number[]) {
+      this.setInput(values);
+
+      for (let neuron of this.forward()) {
+        console.log(`activating with <${neuron.id}, ${neuron.value}>`);
+        neuron.activate();
+      }
+    },
     setInput(values: number[]) {
       for (let index of this.inputs.keys()) {
-        this.inputs[index].value = values[index];
+        const input = values[index];
+
+        this.inputs[index].value = input;
       }
+      const inputs = this.inputs.map((neuron: Neuron) => neuron.value);
+      console.log(inputs);
     }
   }
 }

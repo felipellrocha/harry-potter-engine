@@ -10,5 +10,7 @@ for (let neuron of network.forward()) {
 */
 
 console.log(network.output())
-network.setInput([.2, .3]);
+console.log("one");
+network.learn([.125, .75], [.7]);
+console.log(network.output())
 console.log(network.inspect())
