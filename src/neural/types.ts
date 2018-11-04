@@ -9,6 +9,7 @@ export const BIAS = 'bias';
 export interface Thinkable {
   id: string,
   value: number,
+  weightedInput: number,
   error: number,
 
   left: Edges,
@@ -17,6 +18,10 @@ export interface Thinkable {
 
 export interface Thinkerer {
   activate(): void,
+  backprop(): void,
+  calculateError(): void,
+  calculateCost(expected: number): void,
+  costDerivative(): void,
 }
 
 export interface Activator {

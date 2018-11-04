@@ -19,14 +19,20 @@ export const newBias = (): Neuron => {
   const activation = (value: number): number => value;
   const derivative = (value: number): number => value;
   const activate = (): void => { };
+  const calculateError = (): void => { };
+  const updateWeights = (): void => { };
 
   return {
     ...newThinkable(),
+    ...newRegularThinkerer,
     id: BIAS,
     value: 1,
+    weightedInput: 1,
     error: 0,
 
     activate,
+    calculateError,
+    updateWeights,
     activation,
     derivative,
   }

@@ -52,15 +52,27 @@ export const newNetwork = (
       this.setInput(values);
 
       for (let neuron of this.forward()) {
-        console.log(`activating with <${neuron.id}, ${neuron.value}>`);
+        console.log(`Activating <${neuron.id}, ${neuron.value}>`);
         neuron.activate();
+      }
+
+      for (let index of this.outputs.keys()) {
+        const neuron = this.outputs[index];
+        const answer = answers[index];
+        neuron.calculateError(answer);
+      }
+
+      for (let neuron of this.backward()) {
+        console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
+        neuron.backprop();
       }
     },
     setInput(values: number[]) {
       for (let index of this.inputs.keys()) {
         const input = values[index];
+        const neuron = this.inputs[index];
 
-        this.inputs[index].value = input;
+        neuron.value = input;
       }
       const inputs = this.inputs.map((neuron: Neuron) => neuron.value);
       console.log(inputs);

@@ -1,14 +1,16 @@
 {
-    "name": "dumbledore",
-    "scripts": {
-        "start": "NODE_PATH=src ts-node src/index.ts",
-        "start:watch": "NODE_PATH=src nodemon"
-    },
-    "dependencies": {
-        "@types/uuid": "^3.4.4",
-        "nodemon": "^1.18.5",
-        "ts-node": "^7.0.1",
-        "typescript": "^3.1.3",
-        "uuid": "^3.3.2"
-    }
+  "name": "@hp/dumbledore",
+  "version": "0.1.0",
+  "tag": "dev",
+  "scripts": {
+    "start": "NODE_PATH=src ts-node src/index.ts",
+    "start:watch": "NODE_PATH=src nodemon"
+  },
+  "dependencies": {
+    "@types/uuid": "^3.4.4",
+    "nodemon": "^1.18.5",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.3",
+    "uuid": "^3.3.2"
+  }
 }
