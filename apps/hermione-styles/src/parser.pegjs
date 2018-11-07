@@ -9,8 +9,8 @@ Context =
 	body: $(!Stoppers .)+
     {
     	return {
-        t: "context",
-        body,
+        	t: "context",
+          	body,  
         }
     }
 
@@ -20,29 +20,35 @@ Style
     "style"
     ws+
     name: $(char+)
-    ws+
-    type:('<' ws* $(!'>' .)* ws* '>')?
+    ws*
+    type:OptionalType?
     ws*
     '(' ws* args:$(!')' .)* ws* ')'
     ws*
-    '{' ws* rules:Rule* ws* '}'
+    '{' ws* rules:RuleMatcher* '}'
     ws*
     {
     	return {
         	t: "style",
         	exp: !!exp,
-          name,
-          type: type && type[2],
-          args,
-          rules,
+            name,
+            type: type,
+            args,
+            rules: rules,
         }
     }
+    
+OptionalType = '<' ws* name:$(!'>' .)* ws* '>'
+	{ return name }
+    
+RuleMatcher = rule:Rule ws*
+	{ return rule }
 
-Rule
-	= name: $(char+)
-    ws*
-    ":"
-    ws*
+Rule = (ComplexRule / SimpleRule)
+
+SimpleRule
+	= name:$(char / "-")+
+    sp* ":" sp*
     value:$(!";" .)*
     ";"
     {
@@ -51,8 +57,20 @@ Rule
         value,
       }
     }
+    
+ComplexRule
+	= "(" sp* name:$(!")" .)+ sp* ")"
+      sp* ":" sp*
+      "{" ws* values:RuleMatcher* "};"
+    {
+    	return {
+        	name,
+            values,
+        }
+    }
 
 
+nameChar = char / "'" / '"'
 char = [a-zA-z]
 ws = sp / nl
 sp = ' ' / '\t'

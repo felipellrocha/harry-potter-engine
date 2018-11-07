@@ -1,7 +1,16 @@
 import parser from './parser.pegjs';
+import { camelCase } from 'change-case';
 
 const generateRules = (rule) => {
-  return `${rule.name}: "${rule.value}",`
+  const { name, value, values } = rule;
+
+  if (values) {
+    console.log("here")
+    const rules = values.map(generateRules);
+    return `[${name}]: {\n${rules.join('\n')}\n},`;
+  } else {
+    return `${camelCase(name)}: "${value}",`;
+  }
 }
 
 const generateStyle = (style) => {
@@ -15,19 +24,16 @@ const generateStyle = (style) => {
 
   console.log(style);
 
-  if (!type) {
-    return `
-      ${exp ? "export" : ""} const ${name} = styled('div')((${args}) => ({
-        ${rules.map(generateRules)}
-      }));
-    `;
-  } else {
-    return `
-      ${exp ? "export" : ""} const ${name} = styled<${type}>('div')((${args}) => ({
-        ${rules.map(generateRules)}
-      }));
-    `;
-  }
+
+  const typeString = type ?
+    `<${type}>` :
+    '';
+
+  return `
+    ${exp ? "export" : ""} const ${name} = styled${typeString}('div')((${args}) => ({
+      ${rules.map(generateRules).join('\n')}
+    }));
+  `;
 }
 
 export default function (source) {
@@ -47,7 +53,7 @@ export default function (source) {
   ${doc.join("\n")}
   `;
 
-  console.log(final);
+  //console.log(final);
 
   return final;
 }

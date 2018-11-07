@@ -1,24 +1,18 @@
 import React, { Component } from 'react';
 
+import Plot from 'components/graphs/Plot';
+
 import { Body } from './styles.emo';
 
 class App extends Component {
   render() {
     return (
       <Body>
-        <header className="App-header">
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Plot
+          data={[0, 1, 2, 3, 4, 5]}
+          height={300}
+          width={600}
+        />
       </Body>
     );
   }

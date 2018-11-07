@@ -11,6 +11,7 @@ module.exports = {
   entry: {
     bundle: './src/index.js',
     test: './src/test.js',
+    test2: './src/test2.js',
   },
   devtool: "source-map",
 
@@ -34,7 +35,7 @@ module.exports = {
       },
       {
         test: /\.pegjs$/,
-        use: "pegjs-loader",
+        use: "pegjs-loader?trace=false",
         include: [paths.src],
       }
     ],

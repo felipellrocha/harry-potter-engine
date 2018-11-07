@@ -1,0 +1,10 @@
+export style Graph () {
+  (".axis line"): {
+    stroke: #555;
+    stroke-width: 2px;
+  };
+  (".ticks line"): {
+    stroke: #f5f5f5;
+    stroke-width: 1px;
+  };
+}
