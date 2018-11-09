@@ -3,9 +3,18 @@ import * as d3 from 'd3';
 
 import { Graph } from './styles.emo';
 
+type Point = {
+  id: string,
+  x: number,
+  y: number,
+};
 
 type Props = {
-  data: number[],
+  learn: {
+    m: number,
+    b: number,
+  },
+  data: Point[],
   padding: {
     top: number,
     right: number,
@@ -14,7 +23,15 @@ type Props = {
   },
   height: number,
   width: number,
+  onClick(Point): void,
 };
+
+type Line = {
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+}
 
 class Plot extends React.Component<Props, {}> {
   xRange: d3.ScaleLinear<number, number>;
@@ -25,26 +42,28 @@ class Plot extends React.Component<Props, {}> {
       top: 20,
       right: 20,
       bottom: 50,
-      left: 100,
+      left: 50,
     },
+    onClick: () => { },
   }
 
   constructor(props) {
     super(props);
 
-    const { data } = props;
+    const { data, padding: { top, left } } = props;
 
-    const [_, max] = d3.extent<number>(data);
+    const [_, xMax] = d3.extent<Point, number>(data, item => item.x);
+    const [__, yMax] = d3.extent<Point, number>(data, item => item.y);
 
     this.xRange = d3
       .scaleLinear()
-      .domain([0, max])
-      .range([0, this.width]);
+      .domain([0, xMax])
+      .range([left, this.width + left]);
 
     this.yRange = d3
       .scaleLinear()
-      .domain([0, data.length])
-      .range([this.height, 0]);
+      .domain([0, yMax])
+      .range([this.height + top, top]);
   }
 
   get width() {
@@ -71,42 +90,61 @@ class Plot extends React.Component<Props, {}> {
     return height - (top + bottom);
   }
 
+  handleClick = (event) => {
+    const point = {
+      x: this.xRange.invert(event.clientX),
+      y: this.yRange.invert(event.clientY),
+    };
+
+    this.props.onClick(point);
+  }
+
+  drawLine = (m: number, b: number, x1: number, x2: number): Line => {
+    const y1 = m * x1 + b;
+    const y2 = m * x2 + b;
+
+    return {
+      x1: this.xRange(x1),
+      y1: this.yRange(y1),
+      x2: this.xRange(x2),
+      y2: this.yRange(y2)
+    };
+  }
+
   render() {
     const {
+      learn: {
+        m,
+        b,
+      },
       data,
       width,
       height,
       padding: {
-        top,
         left,
       }
     } = this.props;
 
     const ticks = this.yRange.ticks(10);
 
+    const [_, domain] = this.xRange.domain();
+    const bestFit = this.drawLine(m, b, 0, domain);
+
     return (
       <Graph>
         <svg
           viewBox={`0 0 ${width} ${height}`}
           style={{ width, height }}
+          onClick={this.handleClick}
         >
           <g className="ticks">
             {ticks.map((tick, i) => (
               <line
+                key={i}
                 x1={left}
                 x2={width}
-                y1={this.yRange(tick) + top}
-                y2={this.yRange(tick) + top}
-              />
-            ))}
-          </g>
-          <g className="data">
-            {data.map((point, i) => (
-              <circle
-                key={i}
-                cx={this.xRange(i) + left}
-                cy={this.yRange(point) + top}
-                r={5}
+                y1={this.yRange(tick)}
+                y2={this.yRange(tick)}
               />
             ))}
           </g>
@@ -115,14 +153,29 @@ class Plot extends React.Component<Props, {}> {
               x1={left}
               x2={left}
               y1={0}
-              y2={height - top}
+              y2={this.yRange(0)}
             />
             <line
               x1={left}
               x2={width}
-              y1={height - top}
-              y2={height - top}
+              y1={this.yRange(0)}
+              y2={this.yRange(0)}
             />
+          </g>
+          <g className="best-fit">
+            <line
+              {...bestFit}
+            />
+          </g>
+          <g className="data">
+            {data.map((point, i) => (
+              <circle
+                key={point.id}
+                cx={this.xRange(point.x)}
+                cy={this.yRange(point.y)}
+                r={2}
+              />
+            ))}
           </g>
         </svg>
       </Graph>
