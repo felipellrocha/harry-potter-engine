@@ -24,7 +24,6 @@ const fullyConnectNetwork = (neurons: Neuron[][], bias: Neuron): void => {
   }
 }
 
-
 export const newNetwork = (
   layers: number[],
   learningRate: number = 0.5,
@@ -46,7 +45,7 @@ export const newNetwork = (
     inspect() {
       const inputs = this.inputs.map((neuron: Neuron) => neuron.value);
       const outputs = this.outputs.map((neuron: Neuron) => neuron.value);
-      return [inputs, outputs];
+      return { inputs, outputs };
     },
     learn(values: number[], answers: number[]) {
       this.setInput(values);
@@ -59,12 +58,18 @@ export const newNetwork = (
       for (let index of this.outputs.keys()) {
         const neuron = this.outputs[index];
         const answer = answers[index];
-        neuron.calculateError(answer);
+
+        neuron.calculateCost(answer);
       }
 
       for (let neuron of this.backward()) {
         console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
         neuron.backprop();
+      }
+
+      for (let neuron of this.backward()) {
+        console.log(`Updating weights <${neuron.id}, ${neuron.value}>`);
+        neuron.updateWeights();
       }
     },
     setInput(values: number[]) {

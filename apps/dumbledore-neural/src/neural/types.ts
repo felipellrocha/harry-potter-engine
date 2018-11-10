@@ -19,9 +19,9 @@ export interface Thinkable {
 export interface Thinkerer {
   activate(): void,
   backprop(): void,
-  calculateError(): void,
   calculateCost(expected: number): void,
   costDerivative(): void,
+  updateWeights(learningRate: number): void,
 }
 
 export interface Activator {
@@ -39,7 +39,7 @@ export interface Network {
   forward(): Iterable<Neuron>,
   backward(): Iterable<Neuron>,
   output(): number[],
-  inspect(): [number[], number[]],
+  inspect(): { inputs: number[], outputs: number[] },
   learn(values: number[], answers: number[]): void,
   setInput(values: number[]): void,
 }
