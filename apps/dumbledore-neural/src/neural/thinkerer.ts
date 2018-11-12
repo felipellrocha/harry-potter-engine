@@ -1,17 +1,16 @@
-import { Thinkerer, Connection } from "./types";
+import { Thinkerer, Neuron } from "./types";
 
-export const newRegularThinkerer: Thinkerer = {
-  activate(): void {
-    let value: number = 0.0;
+export const newStochasticThinkerer: Thinkerer = {
+  activate(this: Neuron): void {
+    let weighted: number = 0.0;
 
     for (let [prev, connection] of this.left.entries()) {
-      value += connection.weight * prev.value;
+      weighted += connection.weight * prev.value;
     }
 
-    this.weightedInput = value;
-    this.value = this.activation(value);
+    this.value = this.activation(weighted);
   },
-  backprop(): void {
+  backprop(this: Neuron): void {
     let error: number = 0.0;
 
     for (let [prev, connection] of this.right.entries()) {
@@ -20,16 +19,18 @@ export const newRegularThinkerer: Thinkerer = {
 
     this.error = error;
   },
-  calculateCost(expected: number): void {
-    //this.error = .5 * ((expected - this.value) ** 2);
-    this.error = (expected - this.value);
-  },
-  costDerivative(): void {
+  calculateCost(this: Neuron, expected: number): number {
+    const error = .5 * ((this.value - expected) ** 2);
+    this.error = error;
 
+    return error;
   },
-  updateWeights(learningRate: number): void {
+  updateWeights(this: Neuron, learningRate: number): void {
     for (let [prev, connection] of this.right.entries()) {
-      connection.weight += learningRate * this.error * this.derivative(prev.value) * this.value;
+      connection.weight += learningRate
+        * this.error
+        * this.derivative(this.value)
+        * prev.value;
     }
   },
 };

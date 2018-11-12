@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
     "baseUrl": "./src/",
+    "outDir": "./dist/",
     "module": "commonjs",
+    "declaration": true,
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noEmitOnError": true,
     "removeComments": true,
-    "target": "es6",
+    "target": "es5",
     "downlevelIteration": true,
     "preserveConstEnums": true,
     "sourceMap": true,
     "lib": [
-      "es2017",
+      "es2018",
+      "es2016",
       "dom"
     ],
   },

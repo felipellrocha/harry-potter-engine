@@ -2,12 +2,10 @@ import React from 'react';
 import * as d3 from 'd3';
 
 import { Graph } from './styles.emo';
-import { Line, Data } from 'types';
 import Grid from 'components/graphs/Grid';
-import { number } from 'prop-types';
 
 type Props = {
-  data: Data[],
+  data: number[],
   padding: {
     top: number,
     right: number,
@@ -19,22 +17,9 @@ type Props = {
   onClick(Point): void,
 };
 
-const getX = (data: Data): number => data.input[0];
-const getY = (data: Data): number => data.input[1];
-const calculateError = (data: Data): number => data.expected.map((_, i) => {
-  // calculate diff
-  const expect = data.expected[i];
-  const guess = data.guess[i];
-
-  return expect - guess;
-}).reduce((prev, curr) => {
-  return prev + curr;
-}, 0);
-
 class Plot extends React.Component<Props, {}> {
   xRange: d3.ScaleLinear<number, number>;
   yRange: d3.ScaleLinear<number, number>;
-  colorRange: d3.ScaleLinear<number, string>;
 
   static defaultProps = {
     padding: {
@@ -57,24 +42,17 @@ class Plot extends React.Component<Props, {}> {
   updateData = () => {
     const { data, padding: { top, left } } = this.props;
 
-    const [_, xMax] = d3.extent<Data, number>(data, item => getX(item));
-    const [__, yMax] = d3.extent<Data, number>(data, item => getY(item));
+    const [__, yMax] = d3.extent<number, number>(data, item => item);
 
     this.xRange = d3
       .scaleLinear()
-      .domain([0, xMax])
+      .domain([0, data.length])
       .range([left, this.width + left]);
 
     this.yRange = d3
       .scaleLinear()
       .domain([0, yMax])
       .range([this.height + top, top]);
-
-    this.colorRange = d3
-      .scaleLinear()
-      .domain([0, 1])
-      .interpolate(d3.interpolateHcl)
-      .range([d3.rgb("#0f0"), d3.rgb('#f00')]);
   }
 
   get width() {
@@ -142,10 +120,9 @@ class Plot extends React.Component<Props, {}> {
             {data.map((point, i) => (
               <circle
                 key={i}
-                cx={this.xRange(getX(point))}
-                cy={this.yRange(getY(point))}
-                r={3}
-                fill={this.colorRange(calculateError(point))}
+                cx={this.xRange(i)}
+                cy={this.yRange(point)}
+                r={2}
               />
             ))}
           </g>

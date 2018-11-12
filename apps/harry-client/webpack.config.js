@@ -7,6 +7,8 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HappyPack = require("happypack");
 
+console.log(paths.dumbledore);
+
 module.exports = {
   entry: './src/index.tsx',
   mode: "development",
@@ -25,6 +27,13 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        enforce: "pre",
+        test: "/\.js$/",
+        loader: "source-map-loader",
+        include: [paths.dumbledore],
+        exclude: /react-hot-loader/,
+      },
       {
         test: /\.tsx?$/,
         use: {

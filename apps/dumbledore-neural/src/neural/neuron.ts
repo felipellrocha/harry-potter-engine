@@ -1,6 +1,6 @@
 import { BIAS, Neuron } from './types';
 import { newThinkable } from './thinkable';
-import { newRegularThinkerer } from './thinkerer';
+import { newStochasticThinkerer } from './thinkerer';
 
 export const newSigmoid = (): Neuron => {
 
@@ -9,7 +9,7 @@ export const newSigmoid = (): Neuron => {
 
   return {
     ...newThinkable(),
-    ...newRegularThinkerer,
+    ...newStochasticThinkerer,
     activation,
     derivative,
   }
@@ -17,15 +17,14 @@ export const newSigmoid = (): Neuron => {
 
 export const newBias = (): Neuron => {
   const activation = (value: number): number => value;
-  const derivative = (value: number): number => value;
+  const derivative = (): number => 1;
   const activate = (): void => { };
 
   return {
     ...newThinkable(),
-    ...newRegularThinkerer,
+    ...newStochasticThinkerer,
     id: BIAS,
     value: 1,
-    weightedInput: 1,
     error: 0,
 
     activate,

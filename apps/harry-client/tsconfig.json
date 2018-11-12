@@ -13,6 +13,8 @@
     "moduleResolution": "node",
     "outDir": "./dist/",
     "sourceMap": true,
+    "noEmitOnError": true,
+    "downlevelIteration": true,
     "target": "es5"
   },
   "exclude": [

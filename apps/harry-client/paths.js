@@ -8,4 +8,5 @@ module.exports = {
   src: resolveApp('src'),
   build: resolveApp('build'),
   html: resolveApp('public/index.html'),
+  dumbledore: fs.realpathSync(path.join('./node_modules/@hp/dumbledore')),
 };

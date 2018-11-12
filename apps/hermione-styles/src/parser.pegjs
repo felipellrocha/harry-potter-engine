@@ -1,6 +1,6 @@
-Body =
+iBody =
 	blocks:Blocks*
-    
+
 Stoppers = "export style" / "style"
 
 Blocks = Style / Context
@@ -10,7 +10,7 @@ Context =
     {
     	return {
         	t: "context",
-          	body,  
+          	body,
         }
     }
 
@@ -19,28 +19,44 @@ Style
   	ws*
     "style"
     ws+
+    element: Element?
+    ws*
     name: $(char+)
     ws*
     type:OptionalType?
     ws*
-    '(' ws* args:$(!')' .)* ws* ')'
+    args: Args
     ws*
-    '{' ws* rules:RuleMatcher* '}'
+    rules: Rules
     ws*
     {
     	return {
         	t: "style",
         	exp: !!exp,
             name,
+            element: element ? element : 'div',
             type: type,
             args,
             rules: rules,
         }
     }
-    
+
+Element = '<' ws* element:$(!'>' .)* ws* '>'
+	{
+    	return element
+    }
+Rules = '{' ws* rules:RuleMatcher* '}'
+	{
+    	return rules
+    }
+Args = '(' ws* args:$(!')' .)* ws* ')'
+	{
+    	return args
+    }
+
 OptionalType = '<' ws* name:$(!'>' .)* ws* '>'
 	{ return name }
-    
+
 RuleMatcher = rule:Rule ws*
 	{ return rule }
 
@@ -57,7 +73,7 @@ SimpleRule
         value,
       }
     }
-    
+
 ComplexRule
 	= "(" sp* name:$(!")" .)+ sp* ")"
       sp* ":" sp*

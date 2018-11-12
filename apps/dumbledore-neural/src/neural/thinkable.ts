@@ -5,9 +5,7 @@ export const newThinkable = (): Thinkable => {
   return {
     id: uuid(),
     value: 0.5,
-    weightedInput: 0.5,
     error: 0.5,
-    totalError: 0,
 
     left: new Map(),
     right: new Map(),

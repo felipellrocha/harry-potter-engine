@@ -39,48 +39,59 @@ export const newNetwork = (
     inputs: neurons[0],
     outputs: neurons[layers.length - 1],
     learningRate,
+    error: 0,
     forward: networkIterator("inputs", "right"),
     backward: networkIterator("outputs", "left"),
-    output() { return this.outputs.map((neuron: Neuron) => neuron.value) },
-    inspect() {
+    output(this: Network) { return this.outputs.map((neuron: Neuron) => neuron.value) },
+    inspect(this: Network) {
       const inputs = this.inputs.map((neuron: Neuron) => neuron.value);
       const outputs = this.outputs.map((neuron: Neuron) => neuron.value);
-      return { inputs, outputs };
+      return { inputs, outputs, error: [this.error] };
     },
-    learn(values: number[], answers: number[]) {
+    predict(this: Network, values: number[]): number[] {
       this.setInput(values);
 
       for (let neuron of this.forward()) {
-        console.log(`Activating <${neuron.id}, ${neuron.value}>`);
+        //console.log(`Activating <${neuron.id}, ${neuron.value}>`);
         neuron.activate();
       }
 
+      return this.output()
+    },
+    learn(this: Network, values: number[], answers: number[]) {
+      this.setInput(values);
+
+      for (let neuron of this.forward()) {
+        //console.log(`Activating <${neuron.id}, ${neuron.value}>`);
+        neuron.activate();
+      }
+
+      let error = 0;
       for (let index of this.outputs.keys()) {
         const neuron = this.outputs[index];
         const answer = answers[index];
 
-        neuron.calculateCost(answer);
+        error += neuron.calculateCost(answer);
       }
+      this.error = error;
 
       for (let neuron of this.backward()) {
-        console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
+        //console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
         neuron.backprop();
       }
 
       for (let neuron of this.backward()) {
-        console.log(`Updating weights <${neuron.id}, ${neuron.value}>`);
-        neuron.updateWeights();
+        //console.log(`Updating weights <${neuron.id}, ${neuron.value}>`);
+        neuron.updateWeights(this.learningRate);
       }
     },
-    setInput(values: number[]) {
+    setInput(this: Network, values: number[]) {
       for (let index of this.inputs.keys()) {
         const input = values[index];
         const neuron = this.inputs[index];
 
         neuron.value = input;
       }
-      const inputs = this.inputs.map((neuron: Neuron) => neuron.value);
-      console.log(inputs);
     }
   }
 }
