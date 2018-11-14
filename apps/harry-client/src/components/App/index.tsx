@@ -50,6 +50,8 @@ class App extends Component {
         ...this.network.inspect(),
         expected: element.expected,
       });
+      /*
+      */
 
       return {
         ...element,
@@ -81,9 +83,15 @@ class App extends Component {
     const { data } = this.state;
 
     console.log('training...')
-    for (let i = 0; i < 10000; i++) {
-      const [_, element] = randomElement(data);
+    //for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 1000; i++) {
+      const [index, element] = randomElement(data);
       this.network.learn(element.input, element.expected);
+      console.table({
+        index: [index, '-----'],
+        ...this.network.inspect(),
+        expected: element.expected,
+      });
     }
     console.log('done.')
   }
@@ -96,7 +104,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.network.getRepresentation());
+    //console.log(this.network.getRepresentation());
     return (
       <Body>
         <h1>Data</h1>
@@ -108,20 +116,19 @@ class App extends Component {
         <h1>Network</h1>
         <Sankey
           height={500}
-          width={900}
+          width={700}
           data={this.network.getRepresentation()}
         />
+        <button onClick={this.learn}>Learn</button>
+        <button onClick={this.toggleLearn}>Auto Learn</button>
+        <button onClick={this.test}>Test</button>
+        <button onClick={this.train}>Train</button>
         <h1>Error</h1>
         <Line
           height={300}
           width={900}
           data={this.state.error}
         />
-
-        <button onClick={this.learn}>Learn</button>
-        <button onClick={this.toggleLearn}>Auto Learn</button>
-        <button onClick={this.test}>Test</button>
-        <button onClick={this.train}>Train</button>
       </Body>
     );
   }

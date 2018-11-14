@@ -70,7 +70,7 @@ class Sankey extends React.Component<Props, State> {
       .nodeWidth(36)
       .nodePadding(10)
       // @ts-ignore
-      .nodeId(function (node) { console.log(node); return node.name; })
+      .nodeId(function (node) { return node.name; })
       .size([this.width, this.height])
       .nodeAlign(sankeyJustify);
   }
@@ -100,7 +100,6 @@ class Sankey extends React.Component<Props, State> {
   }
 
   handleConnection = (d) => {
-    console.log(d);
     this.setState({
       link: {
         index: d.index,

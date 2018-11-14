@@ -1,13 +1,18 @@
 import { Connection, Neuron } from './types';
 
 export const newConnection = (
-  n1: Neuron,
-  n2: Neuron,
   weight: number = 0.5,
-): void => {
-  const connection: Connection = {
+): Connection => {
+  return {
     weight,
   };
+}
+
+export const connect = (
+  n1: Neuron,
+  connection: Connection,
+  n2: Neuron,
+): void => {
 
   n1.right.set(n2, connection);
   n2.left.set(n1, connection);

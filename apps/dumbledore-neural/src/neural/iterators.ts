@@ -1,7 +1,7 @@
 import { Network, Neuron, BIAS } from './types';
 
 export const networkIterator =
-  <N extends keyof Network, D extends keyof Neuron>(neuronsKey: N, directionKey: D) =>
+  <N extends keyof Network, D extends keyof Neuron>(neuronsKey: N, directionKey: D, full: boolean = false) =>
     function (): Iterable<Neuron> {
       return {
         [Symbol.iterator]: () => {
@@ -11,7 +11,7 @@ export const networkIterator =
           // Skip first layer of neurons
           // This is necessary both ways
           for (let item of this[neuronsKey]) {
-            viewed.add(item);
+            if (!full) viewed.add(item);
 
             for (let [neuron, _] of item[directionKey]) {
               if (!viewed.has(neuron) && neuron.id !== BIAS) {

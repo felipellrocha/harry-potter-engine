@@ -3,21 +3,23 @@ import { Network, Neuron, BIAS } from './types';
 import { networkIterator } from './iterators';
 
 import { newSigmoid, newBias } from './neuron';
-import { newConnection } from './connection';
+import { connect, newConnection } from './connection';
 
 const fullyConnectNetwork = (neurons: Neuron[][], bias: Neuron): void => {
   for (let index of neurons.keys()) {
     for (let n1 of neurons[index]) {
 
+      const nConnection = newConnection();
+      const bConnection = newConnection();
       // let's get everyone connected to the
       // bias before breaking
-      newConnection(n1, bias);
+      connect(n1, bConnection, bias);
 
       if (index === neurons.length - 1) break;
 
       for (let n2 of neurons[index + 1]) {
-        newConnection(bias, n2);
-        newConnection(n1, n2);
+        connect(bias, bConnection, n2);
+        connect(n1, nConnection, n2);
       }
 
     }
@@ -40,22 +42,33 @@ export const newNetwork = (
     outputs: neurons[layers.length - 1],
     learningRate,
     error: 0,
+    full: networkIterator("inputs", "right", true),
     forward: networkIterator("inputs", "right"),
     backward: networkIterator("outputs", "left"),
     getRepresentation(this: Network) {
+      let links = [];
       let nodes = this.inputs.map(neuron => ({
         name: neuron.id,
       }));
-      let links = [];
       nodes.push({
         name: BIAS,
       });
-      for (let neuron of this.forward()) {
+      for (let neuron of this.inputs) {
+        for (let [prev, connection] of neuron.right.entries()) {
+          if (prev.id !== BIAS) continue;
+          links.push({
+            target: prev.id,
+            source: neuron.id,
+            value: connection.weight,
+          });
+        }
+      }
+
+      for (let neuron of this.full()) {
         nodes.push({
           name: neuron.id
         });
         for (let [prev, connection] of neuron.left.entries()) {
-
           links.push({
             source: prev.id,
             target: neuron.id,
