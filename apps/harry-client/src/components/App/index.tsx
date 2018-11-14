@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Plot from 'components/graphs/Plot';
 import Line from 'components/graphs/Line';
+import Sankey from 'components/graphs/Sankey';
 
 import { Body } from './styles.emo';
 import { newNetwork, Network } from '@hp/dumbledore';
@@ -95,12 +96,20 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.network.getRepresentation());
     return (
       <Body>
+        <h1>Data</h1>
         <Plot
           height={300}
           width={600}
           data={this.state.data}
+        />
+        <h1>Network</h1>
+        <Sankey
+          height={500}
+          width={900}
+          data={this.network.getRepresentation()}
         />
         <h1>Error</h1>
         <Line

@@ -29,8 +29,8 @@ export const newStochasticThinkerer: Thinkerer = {
     for (let [prev, connection] of this.right.entries()) {
       connection.weight += learningRate
         * this.error
-        * this.derivative(this.value)
-        * prev.value;
+        * this.derivative(prev.value)
+        * this.value;
     }
   },
 };

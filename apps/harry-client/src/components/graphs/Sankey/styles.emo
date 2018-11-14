@@ -1,0 +1,33 @@
+export style Graph () {
+  (".nodes rect"): {
+    fill: #22b7e0;
+    opacity: .8;
+    transition: fill 200ms ease-in-out;
+  };
+  (".nodes .display"): {
+    fill: #0d6c86;
+    opacity: .9;
+  };
+  (".nodes .highlight"): {
+    fill: #e02222;
+    opacity: .9;
+  };
+  (".links path"): {
+    fill: none;
+    stroke-opacity: .6;
+    stroke: #c9d0d0;
+  };
+  (".links .highlight"): {
+    fill: none;
+    stroke-opacity: .9;
+    stroke: #c9d0d0;
+  };
+}
+
+export style Stats () {
+  font-family: Helvetica;
+
+  ("div"): {
+    margin-right: 20px;
+  };
+}

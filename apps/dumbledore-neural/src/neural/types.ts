@@ -29,6 +29,11 @@ export interface Activator {
 
 export interface Neuron extends Thinkable, Thinkerer, Activator { }
 
+export interface Representation {
+  nodes: { name: string }[],
+  links: { source: string; target: string; value: number }[],
+}
+
 export interface Network {
   inputs: Neuron[],
   outputs: Neuron[],
@@ -38,6 +43,8 @@ export interface Network {
 
   forward(): Iterable<Neuron>,
   backward(): Iterable<Neuron>,
+
+  getRepresentation(): Representation,
   output(): number[],
   inspect(): { inputs: number[], outputs: number[], error: number[] },
   predict(this: Network, values: number[]): number[],

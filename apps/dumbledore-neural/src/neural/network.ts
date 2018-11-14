@@ -1,4 +1,4 @@
-import { Network, Neuron } from './types';
+import { Network, Neuron, BIAS } from './types';
 
 import { networkIterator } from './iterators';
 
@@ -42,6 +42,33 @@ export const newNetwork = (
     error: 0,
     forward: networkIterator("inputs", "right"),
     backward: networkIterator("outputs", "left"),
+    getRepresentation(this: Network) {
+      let nodes = this.inputs.map(neuron => ({
+        name: neuron.id,
+      }));
+      let links = [];
+      nodes.push({
+        name: BIAS,
+      });
+      for (let neuron of this.forward()) {
+        nodes.push({
+          name: neuron.id
+        });
+        for (let [prev, connection] of neuron.left.entries()) {
+
+          links.push({
+            source: prev.id,
+            target: neuron.id,
+            value: connection.weight,
+          });
+        }
+      }
+
+      return {
+        nodes,
+        links,
+      }
+    },
     output(this: Network) { return this.outputs.map((neuron: Neuron) => neuron.value) },
     inspect(this: Network) {
       const inputs = this.inputs.map((neuron: Neuron) => neuron.value);
