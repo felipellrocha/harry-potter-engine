@@ -1,8 +1,16 @@
 import { BIAS, Neuron } from './types';
 import { newThinkable } from './thinkable';
-import { newStochasticThinkerer } from './thinkerer';
+import {
+  newStochasticThinkerer,
+  newBiasedThinkerer,
+} from './thinkerer';
 
 let id = 0;
+
+const squaredError = {
+  cost(this: Neuron, difference: number): number { return .5 * (difference ** 2); },
+  costDerivative(this: Neuron, difference: number): number { return (difference); },
+}
 
 export const newSigmoid = (): Neuron => {
 
@@ -14,6 +22,7 @@ export const newSigmoid = (): Neuron => {
   return {
     ...newThinkable(),
     ...newStochasticThinkerer,
+    ...squaredError,
     id: `${id}`,
     activation,
     derivative,
@@ -21,18 +30,17 @@ export const newSigmoid = (): Neuron => {
 };
 
 export const newBias = (): Neuron => {
-  const activation = (value: number): number => value;
+  const activation = (): number => 1;
   const derivative = (): number => 1;
-  const activate = (): void => { };
 
   return {
     ...newThinkable(),
-    ...newStochasticThinkerer,
+    ...newBiasedThinkerer,
+    ...squaredError,
     id: BIAS,
     value: 1,
     error: 0,
 
-    activate,
     activation,
     derivative,
   }

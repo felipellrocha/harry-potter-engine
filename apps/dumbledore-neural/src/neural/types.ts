@@ -25,6 +25,8 @@ export interface Thinkerer {
 export interface Activator {
   activation(value: number): number,
   derivative(value: number): number,
+  cost(expected: number): number,
+  costDerivative(expected: number): number,
 }
 
 export interface Neuron extends Thinkable, Thinkerer, Activator { }
@@ -44,6 +46,7 @@ export interface Network {
   full(): Iterable<Neuron>,
   forward(): Iterable<Neuron>,
   backward(): Iterable<Neuron>,
+  invert(): Iterable<Neuron>,
 
   getRepresentation(): Representation,
   output(): number[],

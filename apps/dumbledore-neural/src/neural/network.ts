@@ -45,6 +45,7 @@ export const newNetwork = (
     full: networkIterator("inputs", "right", true),
     forward: networkIterator("inputs", "right"),
     backward: networkIterator("outputs", "left"),
+    invert: networkIterator("outputs", "left", true),
     getRepresentation(this: Network) {
       let links = [];
       let nodes = this.inputs.map(neuron => ({
@@ -115,12 +116,12 @@ export const newNetwork = (
       }
       this.error = error;
 
-      for (let neuron of this.backward()) {
+      for (let neuron of this.invert()) {
         //console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
         neuron.backprop();
       }
 
-      for (let neuron of this.backward()) {
+      for (let neuron of this.invert()) {
         //console.log(`Updating weights <${neuron.id}, ${neuron.value}>`);
         neuron.updateWeights(this.learningRate);
       }

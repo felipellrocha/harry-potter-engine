@@ -15,22 +15,22 @@ class App extends Component {
       {
         input: [0, 1],
         expected: [0],
-        guess: [.5],
+        guess: [.2],
       },
       {
         input: [1, 0],
         expected: [1],
-        guess: [.5],
+        guess: [.7],
       },
       {
         input: [1, 1],
         expected: [0],
-        guess: [.5],
+        guess: [.7],
       },
       {
         input: [0, 0],
         expected: [0],
-        guess: [.5],
+        guess: [.2],
       },
     ],
     error: [0],
@@ -45,12 +45,12 @@ class App extends Component {
 
     const newData = data.map((element, index) => {
       this.network.learn(element.input, element.expected);
+      /*
       console.table({
         index: [index, '-----'],
         ...this.network.inspect(),
         expected: element.expected,
       });
-      /*
       */
 
       return {
@@ -87,12 +87,15 @@ class App extends Component {
     for (let i = 0; i < 1000; i++) {
       const [index, element] = randomElement(data);
       this.network.learn(element.input, element.expected);
+      /*
       console.table({
         index: [index, '-----'],
         ...this.network.inspect(),
         expected: element.expected,
       });
+      */
     }
+    this.learn();
     console.log('done.')
   }
 
@@ -119,10 +122,10 @@ class App extends Component {
           width={700}
           data={this.network.getRepresentation()}
         />
+        <button onClick={this.train}>Train</button>
         <button onClick={this.learn}>Learn</button>
         <button onClick={this.toggleLearn}>Auto Learn</button>
         <button onClick={this.test}>Test</button>
-        <button onClick={this.train}>Train</button>
         <h1>Error</h1>
         <Line
           height={300}
