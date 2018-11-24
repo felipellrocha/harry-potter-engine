@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { debounce } from 'lodash';
+
 import Plot from 'components/graphs/Plot';
 import Line from 'components/graphs/Line';
 import Sankey from 'components/graphs/Sankey';
@@ -42,6 +44,7 @@ class App extends Component {
 
   learn = () => {
     const { data, error } = this.state;
+    console.log('learning...');
 
     const newData = data.map((element, index) => {
       this.network.learn(element.input, element.expected);
@@ -87,6 +90,7 @@ class App extends Component {
     for (let i = 0; i < 1000; i++) {
       const [index, element] = randomElement(data);
       this.network.learn(element.input, element.expected);
+      console.log(`training: ${element.input} -> ${element.expected}: ${this.network.output()}`);
       /*
       console.table({
         index: [index, '-----'],
@@ -123,7 +127,7 @@ class App extends Component {
           data={this.network.getRepresentation()}
         />
         <button onClick={this.train}>Train</button>
-        <button onClick={this.learn}>Learn</button>
+        <button onClick={debounce(() => { this.learn() }, 200)}> Learn</button>
         <button onClick={this.toggleLearn}>Auto Learn</button>
         <button onClick={this.test}>Test</button>
         <h1>Error</h1>

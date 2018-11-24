@@ -42,18 +42,23 @@ export const newNetwork = (
     outputs: neurons[layers.length - 1],
     learningRate,
     error: 0,
-    full: networkIterator("inputs", "right", true),
-    forward: networkIterator("inputs", "right"),
-    backward: networkIterator("outputs", "left"),
-    invert: networkIterator("outputs", "left", true),
+
+    fullForward: networkIterator({ neuronsKey: "inputs", directionKey: "right" }),
+    fullBackward: networkIterator({ neuronsKey: "outputs", directionKey: "left" }),
+    forward: networkIterator({ neuronsKey: "inputs", directionKey: "right", skipKey: "inputs" }),
+    backward: networkIterator({ neuronsKey: "outputs", directionKey: "left", skipKey: "outputs" }),
+    invert: networkIterator({ neuronsKey: "outputs", directionKey: "left", skipKey: "inputs" }),
+
     getRepresentation(this: Network) {
       let links = [];
-      let nodes = this.inputs.map(neuron => ({
-        name: neuron.id,
-      }));
+      let nodes = [];
+
       nodes.push({
         name: BIAS,
       });
+
+      // Get links from input layer
+      // to the bias
       for (let neuron of this.inputs) {
         for (let [prev, connection] of neuron.right.entries()) {
           if (prev.id !== BIAS) continue;
@@ -65,7 +70,7 @@ export const newNetwork = (
         }
       }
 
-      for (let neuron of this.full()) {
+      for (let neuron of this.fullForward()) {
         nodes.push({
           name: neuron.id
         });
@@ -116,13 +121,13 @@ export const newNetwork = (
       }
       this.error = error;
 
-      for (let neuron of this.invert()) {
+      for (let neuron of this.backward()) {
         //console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
         neuron.backprop();
       }
 
       for (let neuron of this.invert()) {
-        //console.log(`Updating weights <${neuron.id}, ${neuron.value}>`);
+        //console.log(`Updating weights <${neuron.id}>`);
         neuron.updateWeights(this.learningRate);
       }
     },

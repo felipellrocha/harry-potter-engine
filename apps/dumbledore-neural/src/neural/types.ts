@@ -43,7 +43,8 @@ export interface Network {
   learningRate: number,
   error: number,
 
-  full(): Iterable<Neuron>,
+  fullForward(): Iterable<Neuron>,
+  fullBackward(): Iterable<Neuron>,
   forward(): Iterable<Neuron>,
   backward(): Iterable<Neuron>,
   invert(): Iterable<Neuron>,
