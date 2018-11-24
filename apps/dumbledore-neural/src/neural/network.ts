@@ -1,9 +1,9 @@
-import { Network, Neuron, BIAS } from './types';
+import { Network, Neuron, BIAS, ActivatorType, ThinkableType } from 'neural/types';
 
-import { networkIterator } from './iterators';
+import { networkIterator } from 'neural/iterators';
 
-import { newSigmoid, newBias } from './neuron';
-import { connect, newConnection } from './connection';
+import { newBias, newSigmoid } from 'neural/neuron';
+import { connect, newConnection } from 'neural/connection';
 
 const fullyConnectNetwork = (neurons: Neuron[][], bias: Neuron): void => {
   for (let index of neurons.keys()) {
@@ -31,7 +31,7 @@ export const newNetwork = (
   learningRate: number = 0.5,
 ): Network => {
 
-  const neurons = layers.map(layer => [...new Array(layer)].map(_ => { return newSigmoid() }));
+  const neurons = layers.map(layer => [...new Array(layer)].map(_ => newSigmoid()));
 
   const bias = newBias();
 

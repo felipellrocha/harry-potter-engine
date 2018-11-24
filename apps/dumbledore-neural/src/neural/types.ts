@@ -4,6 +4,27 @@ export interface Connection {
   weight: number,
 }
 
+export enum ThinkererType {
+  STOCHASTIC,
+  BIAS,
+}
+
+export enum ThinkableType {
+  RANDOM,
+  PLAIN,
+  BIAS,
+}
+
+export enum ActivatorType {
+  SIGMOID,
+  PLAIN,
+  BIAS,
+}
+
+export enum ErratorType {
+  SQUARED,
+}
+
 export const BIAS = 'bias';
 
 export interface Thinkable {
@@ -25,11 +46,13 @@ export interface Thinkerer {
 export interface Activator {
   activation(value: number): number,
   derivative(value: number): number,
+}
+export interface Errator {
   cost(expected: number): number,
   costDerivative(expected: number): number,
 }
 
-export interface Neuron extends Thinkable, Thinkerer, Activator { }
+export interface Neuron extends Thinkable, Thinkerer, Activator, Errator { }
 
 export interface Representation {
   nodes: { name: string }[],

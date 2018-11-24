@@ -32,12 +32,10 @@ export const newStochasticThinkerer: Thinkerer = {
         * this.derivative(this.value)
         * left.value;
 
-      /*
       console.log(`
-      ${this.id} - ${left.id}: ${this.error}, ${this.value}, ${left.value} = ${update};
+      ${left.id} <- ${this.id}: ${this.error}, ${this.value}, ${left.value} = ${update};
       ${this.costDerivative(this.error)} (${this.error}) * ${this.derivative(this.value)} * ${left.value} = ${update}
       `);
-      */
 
       connection.weight += update;
     }
