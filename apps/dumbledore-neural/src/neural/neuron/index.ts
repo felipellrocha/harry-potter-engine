@@ -26,14 +26,19 @@ type Options = {
   error?: ErratorType,
 }
 
+export const plainError: Errator = {
+  cost(difference: number): number { return difference; },
+  costDerivative(difference: number): number { return difference; },
+}
+
 export const squaredError: Errator = {
-  cost(this: Neuron, difference: number): number { return .5 * (difference ** 2); },
-  costDerivative(this: Neuron, difference: number): number { return (difference); },
+  cost(difference: number): number { return (difference ** 2); },
+  costDerivative(difference: number): number { return 2 * difference; },
 }
 
 export const sigmoid: Activator = {
-  activation: (value: number): number => 1 / (1 + (value / Math.E)),
-  derivative: (value: number): number => value * (1.0 - value),
+  activation: (value: number): number => 1 / (1 + (Math.E ** -value)),
+  derivative(this: Activator, value: number): number { return this.activation(value) * (1.0 - this.activation(value)) },
 }
 
 export const bias: Activator = {
@@ -53,6 +58,7 @@ export const newPlainThinkable = (): Thinkable => {
 
   return {
     id: `${id}`,
+    sum: 0.5,
     value: 0.5,
     error: 0.5,
 
@@ -64,6 +70,7 @@ export const newPlainThinkable = (): Thinkable => {
 export const newBiasThinkable = (): Thinkable => {
   return {
     id: BIAS,
+    sum: 1,
     value: 1,
     error: 0,
 
@@ -77,6 +84,7 @@ export const newRandomThinkable = (): Thinkable => {
 
   return {
     id: `${id}`,
+    sum: Math.random(),
     value: Math.random(),
     error: Math.random(),
 
@@ -105,6 +113,7 @@ export const newNeuron = ({
 
   const err = (() => {
     if (error === ErratorType.SQUARED) return squaredError;
+    else return plainError;
   })();
 
   const able = (() => {
@@ -130,6 +139,7 @@ export const newSigmoid = ({
 export const newPlain = ({
   activator = ActivatorType.PLAIN,
   thinkable = ThinkableType.PLAIN,
+  error = ErratorType.PLAIN,
   ...options
 }: Options = {}) => newNeuron({ activator, thinkable, ...options });
 

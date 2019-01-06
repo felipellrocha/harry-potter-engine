@@ -127,8 +127,8 @@ export const newNetwork = (
       }
 
       for (let neuron of this.invert()) {
-        //console.log(`Updating weights <${neuron.id}>`);
         neuron.updateWeights(this.learningRate);
+        console.log(`Updating weights <${neuron.id}>`);
       }
     },
     setInput(this: Network, values: number[]) {

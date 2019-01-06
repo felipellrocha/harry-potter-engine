@@ -8,10 +8,12 @@ export const newStochasticThinkerer: Thinkerer = {
       weighted += connection.weight * left.value;
     }
 
+    this.sum = weighted;
     this.value = this.activation(weighted);
   },
   calculateCost(this: Neuron, expected: number): number {
     this.error = this.cost(this.value - expected);
+    console.log(`expected: ${expected} predicted: ${this.value} error: ${this.error}`)
 
     return this.error;
   },
@@ -31,13 +33,13 @@ export const newStochasticThinkerer: Thinkerer = {
         * this.costDerivative(this.error)
         * this.derivative(this.value)
         * left.value;
+      connection.weight -= update;
 
       console.log(`
-      ${left.id} <- ${this.id}: ${this.error}, ${this.value}, ${left.value} = ${update};
-      ${this.costDerivative(this.error)} (${this.error}) * ${this.derivative(this.value)} * ${left.value} = ${update}
+        ${left.id} <- ${this.id}: ${this.error}, ${this.value}, ${left.value} = ${update};
+        ${learningRate} * ${this.costDerivative(this.error)} * ${this.derivative(this.value)} * ${left.value} = ${update}
+        learning * cost_der() * act_der() * prev_val()
       `);
-
-      connection.weight += update;
     }
   },
 };

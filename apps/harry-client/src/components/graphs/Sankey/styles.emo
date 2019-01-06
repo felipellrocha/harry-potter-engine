@@ -25,6 +25,10 @@ export style Graph () {
 }
 
 export style Stats () {
+  display: flex;
+}
+
+export style Stat () {
   font-family: Helvetica;
 
   ("div"): {

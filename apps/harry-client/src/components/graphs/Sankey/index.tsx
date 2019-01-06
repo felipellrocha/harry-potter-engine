@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { sankey, sankeyJustify, sankeyLinkHorizontal } from 'd3-sankey';
 import { Representation } from '@hp/dumbledore';
-import { Graph, Stats } from './styles.emo';
+import { Graph, Stats, Stat } from './styles.emo';
 
 type Props = {
   data: any,
@@ -181,10 +181,14 @@ class Sankey extends React.Component<Props, State> {
           </g>
         </svg>
         <Stats>
-          <div>Node: <b>{id}</b></div>
-          <div>Weight: <b>{weight}</b></div>
-          <div>FROM: <b>{id1}</b></div>
-          <div>TO: <b>{id2}</b></div>
+          <Stat>
+            <div>Selected Node: <b>{id}</b></div>
+          </Stat>
+          <Stat>
+            <div>FROM: <b>{id1}</b></div>
+            <div>Weight: <b>{weight}</b></div>
+            <div>TO: <b>{id2}</b></div>
+          </Stat>
         </Stats>
       </Graph>
     );

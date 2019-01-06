@@ -15,8 +15,15 @@ class App extends Component {
   state = {
     data: [
       {
-        input: [0, 1],
+        input: [0, 0],
         expected: [0],
+        guess: [.2],
+      },
+      /*
+      */
+      {
+        input: [0, 1],
+        expected: [1],
         guess: [.2],
       },
       {
@@ -29,12 +36,10 @@ class App extends Component {
         expected: [0],
         guess: [.7],
       },
-      {
-        input: [0, 0],
-        expected: [0],
-        guess: [.2],
-      },
+      /*
+      */
     ],
+    predictions: [0],
     error: [0],
   };
 
@@ -44,9 +49,9 @@ class App extends Component {
 
   learn = () => {
     const { data, error } = this.state;
-    console.log('learning...');
 
     const newData = data.map((element, index) => {
+      console.log(`learning ${element}`);
       this.network.learn(element.input, element.expected);
       /*
       console.table({
@@ -56,21 +61,21 @@ class App extends Component {
       });
       */
 
+      this.update();
       return {
         ...element,
         guess: this.network.output(),
       };
     });
+  }
 
-    const state = this.network.inspect();
-    const err = (error.length > 150) ?
-      [...error.slice(1), state.error] :
-      [...error, state.error];
-
-    this.setState({
-      error: err,
-      data: newData,
-    });
+  toggleRandom = () => {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    } else {
+      this.timer = setInterval(this.randomAndUpdate, 75);
+    }
   }
 
   toggleLearn = () => {
@@ -82,23 +87,55 @@ class App extends Component {
     }
   }
 
-  train = () => {
+  update = () => {
+    const { data, error, predictions } = this.state;
+
+    const newData = data.map((element, index) => {
+      this.network.predict(element.input);
+
+      return {
+        ...element,
+        guess: this.network.output(),
+      };
+    });
+
+    const state = this.network.inspect();
+
+    const pred = (predictions.length > 150) ?
+      [...predictions.slice(1), ...state.outputs] :
+      [...predictions, ...state.outputs];
+
+    const err = (error.length > 150) ?
+      [...error.slice(1), state.error] :
+      [...error, state.error];
+
+    this.setState({
+      predictions: pred,
+      error: err,
+      data: newData,
+    });
+  }
+
+  random = () => {
     const { data } = this.state;
 
+    const [_, element] = randomElement(data);
+    this.network.learn(element.input, element.expected);
+    console.log(`
+    training: ${element.input} -> ${element.expected} - ${this.network.output().map(v => v.toFixed(4))}
+    error: ${this.network.error.toFixed(4)}
+    `);
+  }
+
+  randomAndUpdate = () => {
+    this.random();
+    this.update();
+  }
+
+  train = () => {
     console.log('training...')
     //for (let i = 0; i < 10000; i++) {
-    for (let i = 0; i < 1000; i++) {
-      const [index, element] = randomElement(data);
-      this.network.learn(element.input, element.expected);
-      console.log(`training: ${element.input} -> ${element.expected}: ${this.network.output()}`);
-      /*
-      console.table({
-        index: [index, '-----'],
-        ...this.network.inspect(),
-        expected: element.expected,
-      });
-      */
-    }
+    for (let i = 0; i < 1000; i++) this.random();
     this.learn();
     console.log('done.')
   }
@@ -108,6 +145,19 @@ class App extends Component {
     console.log(this.network.predict([0, 1]));
     console.log(this.network.predict([1, 0]));
     console.log(this.network.predict([1, 1]));
+  }
+
+  renderButtons = () => {
+    return (
+      <>
+        <button onClick={this.train}>Train</button>
+        <button onClick={debounce(() => { this.learn() }, 200)}> Learn</button>
+        <button onClick={this.toggleLearn}>Auto Learn</button>
+        <button onClick={debounce(() => { this.randomAndUpdate() }, 200)}> Random</button>
+        <button onClick={this.toggleRandom}>Auto Random</button>
+        <button onClick={this.test}>Test</button>
+      </>
+    );
   }
 
   render() {
@@ -120,22 +170,28 @@ class App extends Component {
           width={600}
           data={this.state.data}
         />
+        <this.renderButtons />
         <h1>Network</h1>
         <Sankey
           height={500}
-          width={700}
+          width={600}
           data={this.network.getRepresentation()}
         />
-        <button onClick={this.train}>Train</button>
-        <button onClick={debounce(() => { this.learn() }, 200)}> Learn</button>
-        <button onClick={this.toggleLearn}>Auto Learn</button>
-        <button onClick={this.test}>Test</button>
+        <this.renderButtons />
         <h1>Error</h1>
         <Line
           height={300}
-          width={900}
+          width={600}
           data={this.state.error}
         />
+        <this.renderButtons />
+        <h1>Predictions</h1>
+        <Line
+          height={300}
+          width={600}
+          data={this.state.predictions}
+        />
+        <this.renderButtons />
       </Body>
     );
   }

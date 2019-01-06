@@ -23,12 +23,14 @@ export enum ActivatorType {
 
 export enum ErratorType {
   SQUARED,
+  PLAIN,
 }
 
 export const BIAS = 'bias';
 
 export interface Thinkable {
   id: string,
+  sum: number,
   value: number,
   error: number,
 
