@@ -42,7 +42,7 @@ export interface Thinkerer {
   activate(): void,
   backprop(): void,
   calculateCost(expected: number): number,
-  updateWeights(learningRate: number): void,
+  updateWeights(error: number, learningRate: number): void,
 }
 
 export interface Activator {

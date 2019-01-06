@@ -26,12 +26,12 @@ export const newStochasticThinkerer: Thinkerer = {
 
     this.error = error;
   },
-  updateWeights(this: Neuron, learningRate: number): void {
+  updateWeights(this: Neuron, error: number, learningRate: number): void {
     console.log(`n: ${this.id}`);
     console.log(`left: ${[...this.left.keys()].map(n => n.id)}`);
     for (let [left, connection] of this.left.entries()) {
       const update = learningRate
-        * this.costDerivative(this.error)
+        * this.costDerivative(error)
         * this.derivative(this.sum)
         * left.value;
       connection.weight -= update;

@@ -141,7 +141,7 @@ export const newNetwork = (
       }
 
       for (let neuron of this.invert()) {
-        neuron.updateWeights(this.learningRate);
+        neuron.updateWeights(this.error, this.learningRate);
         //console.log(`Updating weights <${neuron.id}>`);
       }
     },
