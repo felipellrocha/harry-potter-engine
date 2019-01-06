@@ -64,6 +64,8 @@ export interface Representation {
 export interface Network {
   inputs: Neuron[],
   outputs: Neuron[],
+  neurons: Neuron[],
+  connections: Connection[],
 
   learningRate: number,
   error: number,
@@ -79,5 +81,6 @@ export interface Network {
   inspect(): { inputs: number[], outputs: number[], error: number[] },
   predict(this: Network, values: number[]): number[],
   learn(values: number[], answers: number[]): void,
+  calculateError(answers: number[]): void,
   setInput(values: number[]): void,
 }

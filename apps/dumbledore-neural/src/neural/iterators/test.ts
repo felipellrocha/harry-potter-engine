@@ -1,7 +1,7 @@
 import { newNetwork } from 'neural/network';
 
 describe('Iterators', () => {
-  const network = newNetwork([2, 2, 2], 1);
+  const network = newNetwork([2, 2, 2], { learningRate: 1 });
 
   it('iterates forwards in the correct order', () => {
     const order = [...network.forward()].map(n => n.id);

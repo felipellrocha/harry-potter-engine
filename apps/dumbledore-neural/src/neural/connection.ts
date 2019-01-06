@@ -8,6 +8,12 @@ export const newConnection = (
   };
 }
 
+export const newRandomConnection = (): Connection => {
+  return {
+    weight: Math.random(),
+  };
+}
+
 export const connect = (
   n1: Neuron,
   connection: Connection,

@@ -32,8 +32,8 @@ export const plainError: Errator = {
 }
 
 export const squaredError: Errator = {
-  cost(difference: number): number { return (difference ** 2); },
-  costDerivative(difference: number): number { return 2 * difference; },
+  cost(difference: number): number { return .5 * (difference ** 2); },
+  costDerivative(difference: number): number { return difference; },
 }
 
 export const sigmoid: Activator = {

@@ -1,43 +1,64 @@
-import { Network, Neuron, BIAS, ActivatorType, ThinkableType } from 'neural/types';
+import { Network, Neuron, BIAS, Connection } from 'neural/types';
 
 import { networkIterator } from 'neural/iterators';
 
 import { newBias, newSigmoid } from 'neural/neuron';
-import { connect, newConnection } from 'neural/connection';
+import { connect, newRandomConnection } from 'neural/connection';
 
-const fullyConnectNetwork = (neurons: Neuron[][], bias: Neuron): void => {
+const fullyConnectNetwork = (neurons: Neuron[][], bias: Neuron | null): Connection[] => {
+  const connections: Connection[] = [];
+
   for (let index of neurons.keys()) {
     for (let n1 of neurons[index]) {
-
-      const nConnection = newConnection();
-      const bConnection = newConnection();
-      // let's get everyone connected to the
-      // bias before breaking
-      connect(n1, bConnection, bias);
-
       if (index === neurons.length - 1) break;
 
       for (let n2 of neurons[index + 1]) {
-        connect(bias, bConnection, n2);
+        const nConnection = newRandomConnection();
         connect(n1, nConnection, n2);
+        connections.push(nConnection);
       }
-
     }
   }
+
+  // if we have a bias,
+  // let's get everyone connected to the
+  // bias before potentially breaking
+  if (bias) {
+    const bConnection = newRandomConnection();
+
+    for (let [i, layer] of neurons.entries()) {
+      for (let n of layer) {
+        if (i !== 0) connect(bias, bConnection, n);
+        if (i !== neurons.length) connect(n, bConnection, bias);
+        connections.push(bConnection);
+      }
+    }
+  }
+
+  return connections;
 }
 
+type Options = {
+  learningRate?: number,
+  withBias?: boolean,
+}
 export const newNetwork = (
   layers: number[],
-  learningRate: number = 0.5,
+  {
+    learningRate = 0.5,
+    withBias = true,
+  }: Options = {},
 ): Network => {
-
-  const neurons = layers.map(layer => [...new Array(layer)].map(_ => newSigmoid()));
 
   const bias = newBias();
 
-  fullyConnectNetwork(neurons, bias);
+  const neurons = layers.map(layer => [...new Array(layer)].map(_ => newSigmoid()));
+  const connections = fullyConnectNetwork(neurons, withBias ? bias : null);
 
   return {
+    neurons: ([] as Neuron[]).concat(...neurons),
+    connections,
+
     inputs: neurons[0],
     outputs: neurons[layers.length - 1],
     learningRate,
@@ -112,14 +133,7 @@ export const newNetwork = (
         neuron.activate();
       }
 
-      let error = 0;
-      for (let index of this.outputs.keys()) {
-        const neuron = this.outputs[index];
-        const answer = answers[index];
-
-        error += neuron.calculateCost(answer);
-      }
-      this.error = error;
+      this.calculateError(answers);
 
       for (let neuron of this.backward()) {
         //console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
@@ -128,8 +142,19 @@ export const newNetwork = (
 
       for (let neuron of this.invert()) {
         neuron.updateWeights(this.learningRate);
-        console.log(`Updating weights <${neuron.id}>`);
+        //console.log(`Updating weights <${neuron.id}>`);
       }
+    },
+
+    calculateError(answers: number[]) {
+      let error = 0;
+      for (let index of this.outputs.keys()) {
+        const neuron = this.outputs[index];
+        const answer = answers[index];
+
+        error += neuron.calculateCost(answer);
+      }
+      this.error = error;
     },
     setInput(this: Network, values: number[]) {
       for (let index of this.inputs.keys()) {

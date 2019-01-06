@@ -9,10 +9,12 @@ import Sankey from 'components/graphs/Sankey';
 import { Body } from './styles.emo';
 import { newNetwork, Network } from '@hp/dumbledore';
 import { randomElement } from 'utils';
+import { values } from 'd3';
 
 
 class App extends Component {
   state = {
+    speed: 75,
     data: [
       {
         input: [0, 0],
@@ -74,7 +76,7 @@ class App extends Component {
       clearInterval(this.timer);
       this.timer = null;
     } else {
-      this.timer = setInterval(this.randomAndUpdate, 75);
+      this.timer = setInterval(this.randomAndUpdate, this.state.speed);
     }
   }
 
@@ -83,7 +85,7 @@ class App extends Component {
       clearInterval(this.timer);
       this.timer = null;
     } else {
-      this.timer = setInterval(this.learn, 75);
+      this.timer = setInterval(this.learn, this.state.speed);
     }
   }
 
@@ -147,6 +149,12 @@ class App extends Component {
     console.log(this.network.predict([1, 1]));
   }
 
+  handleSpeedChange = (speed) => {
+    this.setState({
+      speed,
+    })
+  }
+
   renderButtons = () => {
     return (
       <>
@@ -156,6 +164,7 @@ class App extends Component {
         <button onClick={debounce(() => { this.randomAndUpdate() }, 200)}> Random</button>
         <button onClick={this.toggleRandom}>Auto Random</button>
         <button onClick={this.test}>Test</button>
+        Speed: <input type="number" value={this.state.speed} onChange={(e) => this.handleSpeedChange(e.target.value)} />
       </>
     );
   }

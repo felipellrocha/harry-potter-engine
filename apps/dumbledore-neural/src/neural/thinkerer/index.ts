@@ -13,7 +13,7 @@ export const newStochasticThinkerer: Thinkerer = {
   },
   calculateCost(this: Neuron, expected: number): number {
     this.error = this.cost(this.value - expected);
-    console.log(`expected: ${expected} predicted: ${this.value} error: ${this.error}`)
+    //console.log(`expected: ${expected} predicted: ${this.value} error: ${this.error}`)
 
     return this.error;
   },
@@ -27,17 +27,20 @@ export const newStochasticThinkerer: Thinkerer = {
     this.error = error;
   },
   updateWeights(this: Neuron, learningRate: number): void {
-    //console.log("here?");
+    console.log(`n: ${this.id}`);
+    console.log(`left: ${[...this.left.keys()].map(n => n.id)}`);
     for (let [left, connection] of this.left.entries()) {
       const update = learningRate
         * this.costDerivative(this.error)
-        * this.derivative(this.value)
+        * this.derivative(this.sum)
         * left.value;
       connection.weight -= update;
 
       console.log(`
+        left.id <- this.id: this.error, this.value, left.value = update value;
         ${left.id} <- ${this.id}: ${this.error}, ${this.value}, ${left.value} = ${update};
-        ${learningRate} * ${this.costDerivative(this.error)} * ${this.derivative(this.value)} * ${left.value} = ${update}
+        learningRate * this.costDerivative(this.error) * this.derivative(this.sum) * left.value = update;
+        ${learningRate} * ${this.costDerivative(this.error)} * ${this.derivative(this.sum)} * ${left.value} = ${update};
         learning * cost_der() * act_der() * prev_val()
       `);
     }
