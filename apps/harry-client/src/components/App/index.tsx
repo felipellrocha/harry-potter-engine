@@ -16,12 +16,17 @@ class App extends Component {
   state = {
     speed: 75,
     data: [
+      /*
       {
         input: [0, 0],
         expected: [0],
         guess: [.2],
       },
-      /*
+      {
+        input: [1, 1],
+        expected: [0],
+        guess: [.7],
+      },
       */
       {
         input: [0, 1],
@@ -33,13 +38,6 @@ class App extends Component {
         expected: [1],
         guess: [.7],
       },
-      {
-        input: [1, 1],
-        expected: [0],
-        guess: [.7],
-      },
-      /*
-      */
     ],
     predictions: [0],
     error: [0],
