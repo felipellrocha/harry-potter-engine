@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { debounce } from 'lodash';
 
 import Plot from 'components/graphs/Plot';
+import Canvas from 'components/graphs/Canvas';
 import Line from 'components/graphs/Line';
 import Sankey from 'components/graphs/Sankey';
 
@@ -15,6 +16,7 @@ import { values } from 'd3';
 class App extends Component {
   state = {
     speed: 75,
+    resolution: 100,
     data: [
       /*
       */
@@ -136,7 +138,7 @@ class App extends Component {
   train = () => {
     console.log('training...')
     //for (let i = 0; i < 10000; i++) {
-    for (let i = 0; i < 1000; i++) this.random();
+    for (let i = 0; i < 50000; i++) this.random();
     this.learn();
     console.log('done.')
   }
@@ -170,6 +172,20 @@ class App extends Component {
 
   render() {
     //console.log(this.network.getRepresentation());
+    const { resolution } = this.state;
+
+    const predictions = [];
+
+    for (var i = 0; i < resolution; i++) {
+      for (var j = 0; j < resolution; j++) {
+        const x1 = i / resolution;
+        const x2 = j / resolution;
+        const inputs = [x1, x2];
+
+        predictions.push(this.network.predict(inputs)[0]);
+      }
+    }
+
     return (
       <Body>
         <h1>Data</h1>
@@ -200,6 +216,11 @@ class App extends Component {
           height={300}
           width={600}
           data={this.state.predictions}
+        />
+        <this.renderButtons />
+        <h1>Canvas</h1>
+        <Canvas
+          data={predictions}
         />
         <this.renderButtons />
       </Body>
