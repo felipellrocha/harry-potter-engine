@@ -27,29 +27,39 @@ type Options = {
 }
 
 export const plainError: Errator = {
-  cost(difference: number): number { return difference; },
-  costDerivative(difference: number): number { return difference; },
+  cost: {
+    fn(difference: number): number { return difference; },
+    der(difference: number): number { return difference; },
+  },
 }
 
 export const squaredError: Errator = {
-  cost(difference: number): number { return .5 * (difference ** 2); },
-  costDerivative(difference: number): number { return difference; },
+  cost: {
+    fn(difference: number): number { return .5 * (difference ** 2); },
+    der(difference: number): number { return difference; },
+  }
 }
 
 export const sigmoid: Activator = {
-  activation: (value: number): number => 1 / (1 + (Math.E ** -value)),
-  derivative(this: Activator, value: number): number { return this.activation(value) * (1.0 - this.activation(value)) },
+  activation: {
+    fn(value: number): number { return 1 / (1 + (Math.E ** -value)) },
+    der(value: number): number { return this.fn(value) * (1.0 - this.fn(value)) },
+  },
 }
 
 export const bias: Activator = {
-  activation: (): number => 1,
-  derivative: (): number => 1,
+  activation: {
+    fn(): number { return 1 },
+    der(): number { return 1 },
+  },
 }
 
 // Useful for testing
 export const plain: Activator = {
-  activation: (value: number): number => value,
-  derivative: (value: number): number => value,
+  activation: {
+    fn(value: number): number { return value },
+    der(value: number): number { return value },
+  },
 }
 
 

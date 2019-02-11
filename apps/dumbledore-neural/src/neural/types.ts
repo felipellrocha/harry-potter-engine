@@ -1,6 +1,7 @@
 export type Edges = Map<Neuron, Connection>;
 
 export interface Connection {
+  id: string,
   weight: number,
 }
 
@@ -42,16 +43,20 @@ export interface Thinkerer {
   activate(): void,
   backprop(): void,
   calculateCost(expected: number): number,
-  updateWeights(error: number, learningRate: number): void,
+  updateWeights(learningRate: number): void,
 }
 
 export interface Activator {
-  activation(value: number): number,
-  derivative(value: number): number,
+  activation: {
+    fn(value: number): number,
+    der(value: number): number,
+  },
 }
 export interface Errator {
-  cost(expected: number): number,
-  costDerivative(expected: number): number,
+  cost: {
+    fn(expected: number): number,
+    der(expected: number): number,
+  },
 }
 
 export interface Neuron extends Thinkable, Thinkerer, Activator, Errator { }
@@ -81,6 +86,5 @@ export interface Network {
   inspect(): { inputs: number[], outputs: number[], error: number[] },
   predict(this: Network, values: number[]): number[],
   learn(values: number[], answers: number[]): void,
-  calculateError(answers: number[]): void,
   setInput(values: number[]): void,
 }

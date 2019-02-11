@@ -13,24 +13,22 @@ const fullyConnectNetwork = (neurons: Neuron[][], bias: Neuron | null): Connecti
       if (index === neurons.length - 1) break;
 
       for (let n2 of neurons[index + 1]) {
-        const nConnection = newRandomConnection();
-        connect(n1, nConnection, n2);
-        connections.push(nConnection);
+        const connection = newRandomConnection();
+        connect(n1, connection, n2);
+        connections.push(connection);
       }
     }
   }
 
-  // if we have a bias,
-  // let's get everyone connected to the
-  // bias before potentially breaking
+  // if we have a bias, let's get everyone
+  // connected to it
   if (bias) {
-    const bConnection = newRandomConnection();
-
     for (let [i, layer] of neurons.entries()) {
       for (let n of layer) {
-        if (i !== 0) connect(bias, bConnection, n);
-        if (i !== neurons.length) connect(n, bConnection, bias);
-        connections.push(bConnection);
+        const connection = newRandomConnection();
+        if (i !== 0) connect(bias, connection, n);
+        if (i !== neurons.length) connect(n, connection, bias);
+        connections.push(connection);
       }
     }
   }
@@ -76,6 +74,8 @@ export const newNetwork = (
 
       nodes.push({
         name: BIAS,
+        a: bias.value,
+        ...bias,
       });
 
       // Get links from input layer
@@ -93,7 +93,9 @@ export const newNetwork = (
 
       for (let neuron of this.fullForward()) {
         nodes.push({
-          name: neuron.id
+          name: neuron.id,
+          a: neuron.value,
+          ...neuron,
         });
         for (let [prev, connection] of neuron.left.entries()) {
           links.push({
@@ -133,7 +135,16 @@ export const newNetwork = (
         neuron.activate();
       }
 
-      this.calculateError(answers);
+      let error = 0;
+      for (let index of this.outputs.keys()) {
+        const neuron = this.outputs[index];
+        const answer = answers[index];
+
+        error += neuron.calculateCost(answer);
+        //error += (answer - neuron.value);
+        //console.log(`${neuron.id}: value: ${neuron.value}, desired: ${answer}, error: ${error}`);
+      }
+      this.error = error;
 
       for (let neuron of this.backward()) {
         //console.log(`Backpropping <${neuron.id}, ${neuron.value}>`);
@@ -141,21 +152,11 @@ export const newNetwork = (
       }
 
       for (let neuron of this.invert()) {
-        neuron.updateWeights(this.error, this.learningRate);
+        neuron.updateWeights(this.learningRate);
         //console.log(`Updating weights <${neuron.id}>`);
       }
     },
 
-    calculateError(answers: number[]) {
-      let error = 0;
-      for (let index of this.outputs.keys()) {
-        const neuron = this.outputs[index];
-        const answer = answers[index];
-
-        error += neuron.calculateCost(answer);
-      }
-      this.error = error;
-    },
     setInput(this: Network, values: number[]) {
       for (let index of this.inputs.keys()) {
         const input = values[index];

@@ -40,6 +40,7 @@ class Grid extends React.Component<Props, {}> {
     const ticks = yRange.ticks(10);
 
     const [_, domain] = xRange.domain();
+    const [yMin, yMax] = yRange.range();
 
     return (
       <Graph className="grid">
@@ -68,8 +69,8 @@ class Grid extends React.Component<Props, {}> {
           <line
             x1={left}
             x2={left}
-            y1={0}
-            y2={yRange(0)}
+            y1={yMax}
+            y2={yMin}
           />
           <line
             x1={left}

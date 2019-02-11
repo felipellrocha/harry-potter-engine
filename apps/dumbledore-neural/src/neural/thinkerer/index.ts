@@ -9,11 +9,11 @@ export const newStochasticThinkerer: Thinkerer = {
     }
 
     this.sum = weighted;
-    this.value = this.activation(weighted);
+    this.value = this.activation.fn(weighted);
   },
   calculateCost(this: Neuron, expected: number): number {
-    this.error = this.cost(this.value - expected);
-    //console.log(`expected: ${expected} predicted: ${this.value} error: ${this.error}`)
+    this.error = this.cost.der(expected - this.value) * this.activation.der(this.sum);
+
 
     return this.error;
   },
@@ -24,32 +24,25 @@ export const newStochasticThinkerer: Thinkerer = {
       error += connection.weight * neuron.error;
     }
 
-    this.error = error;
+    this.error = error * this.activation.der(this.sum);
+    //console.log(this.id, error, this.error);
   },
-  updateWeights(this: Neuron, error: number, learningRate: number): void {
-    console.log(`n: ${this.id}`);
-    console.log(`left: ${[...this.left.keys()].map(n => n.id)}`);
+  updateWeights(this: Neuron, learningRate: number): void {
+    //console.log(`left: ${[...this.left.keys()].map(n => n.id)}`);
     for (let [left, connection] of this.left.entries()) {
+      const pw = connection.weight;
       const update = learningRate
-        * this.costDerivative(error)
-        * this.derivative(this.sum)
+        * this.error
         * left.value;
-      connection.weight -= update;
 
-      console.log(`
-        left.id <- this.id: this.error, this.value, left.value = update value;
-        ${left.id} <- ${this.id}: ${this.error}, ${this.value}, ${left.value} = ${update};
-        learningRate * this.costDerivative(this.error) * this.derivative(this.sum) * left.value = update;
-        ${learningRate} * ${this.costDerivative(this.error)} * ${this.derivative(this.sum)} * ${left.value} = ${update};
-        learning * cost_der() * act_der() * prev_val()
-      `);
+      connection.weight -= update;
     }
   },
 };
 
 export const newBiasedThinkerer: Thinkerer = {
-  activate(this: Neuron): void { },
-  backprop(this: Neuron): void { },
-  calculateCost(this: Neuron, expected: number): number { return 0 },
-  updateWeights(this: Neuron, learningRate: number): void { },
+  activate(this: Neuron): void { throw new Error() },
+  backprop(this: Neuron): void { throw new Error() },
+  calculateCost(this: Neuron, expected: number): number { throw new Error() },
+  updateWeights(this: Neuron, learningRate: number): void { throw new Error() },
 }

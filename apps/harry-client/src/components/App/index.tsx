@@ -17,6 +17,7 @@ class App extends Component {
     speed: 75,
     data: [
       /*
+      */
       {
         input: [0, 0],
         expected: [0],
@@ -27,7 +28,6 @@ class App extends Component {
         expected: [0],
         guess: [.7],
       },
-      */
       {
         input: [0, 1],
         expected: [1],
@@ -43,7 +43,9 @@ class App extends Component {
     error: [0],
   };
 
-  network: Network = newNetwork([2, 2, 1], .5);
+  network: Network = newNetwork([2, 2, 1], {
+    learningRate: .05,
+  });
 
   timer: NodeJS.Timeout | null;
 
@@ -51,7 +53,7 @@ class App extends Component {
     const { data, error } = this.state;
 
     const newData = data.map((element, index) => {
-      console.log(`learning ${element}`);
+      //console.log(`learning ${element}`);
       this.network.learn(element.input, element.expected);
       /*
       console.table({
@@ -120,11 +122,10 @@ class App extends Component {
     const { data } = this.state;
 
     const [_, element] = randomElement(data);
+    //console.log(`training: ${element.input} -> ${element.expected}`)
     this.network.learn(element.input, element.expected);
-    console.log(`
-    training: ${element.input} -> ${element.expected} - ${this.network.output().map(v => v.toFixed(4))}
-    error: ${this.network.error.toFixed(4)}
-    `);
+    //console.log(`output: ${this.network.output().map(v => v.toFixed(4))} error: ${this.network.error.toFixed(4)}`);
+    //console.log(`trained: ${element.input} -> ${element.expected}`)
   }
 
   randomAndUpdate = () => {
@@ -155,7 +156,7 @@ class App extends Component {
 
   renderButtons = () => {
     return (
-      <>
+      <div>
         <button onClick={this.train}>Train</button>
         <button onClick={debounce(() => { this.learn() }, 200)}> Learn</button>
         <button onClick={this.toggleLearn}>Auto Learn</button>
@@ -163,7 +164,7 @@ class App extends Component {
         <button onClick={this.toggleRandom}>Auto Random</button>
         <button onClick={this.test}>Test</button>
         Speed: <input type="number" value={this.state.speed} onChange={(e) => this.handleSpeedChange(e.target.value)} />
-      </>
+      </div>
     );
   }
 
@@ -185,6 +186,8 @@ class App extends Component {
           data={this.network.getRepresentation()}
         />
         <this.renderButtons />
+        {/*
+        */}
         <h1>Error</h1>
         <Line
           height={300}

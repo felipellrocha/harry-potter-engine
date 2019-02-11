@@ -44,6 +44,8 @@ class Sankey extends React.Component<Props, State> {
   state = {
     node: {
       id: 'BIAS',
+      value: 1,
+      error: 0,
     },
     link: {
       index: 0,
@@ -112,9 +114,7 @@ class Sankey extends React.Component<Props, State> {
 
   handleNode = (d) => {
     this.setState({
-      node: {
-        id: d.name,
-      }
+      node: d
     });
   }
 
@@ -131,6 +131,8 @@ class Sankey extends React.Component<Props, State> {
     const {
       node: {
         id,
+        a,
+        error,
       },
       link: {
         index,
@@ -185,8 +187,12 @@ class Sankey extends React.Component<Props, State> {
             <div>Selected Node: <b>{id}</b></div>
           </Stat>
           <Stat>
+            <div>Value: <b>{!!a ? a.toFixed(5) : ''}</b></div>
+            <div>Error: <b>{!!error ? error.toFixed(5) : ''}</b></div>
+          </Stat>
+          <Stat>
             <div>FROM: <b>{id1}</b></div>
-            <div>Weight: <b>{weight}</b></div>
+            <div>Weight: <b>{!!weight ? weight.toFixed(5) : ''}</b></div>
             <div>TO: <b>{id2}</b></div>
           </Stat>
         </Stats>

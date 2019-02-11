@@ -42,7 +42,7 @@ class Plot extends React.Component<Props, {}> {
   updateData = () => {
     const { data, padding: { top, left } } = this.props;
 
-    const [__, yMax] = d3.extent<number, number>(data, item => item);
+    const [yMin, yMax] = d3.extent<number, number>(data, item => item);
 
     this.xRange = d3
       .scaleLinear()
@@ -51,7 +51,7 @@ class Plot extends React.Component<Props, {}> {
 
     this.yRange = d3
       .scaleLinear()
-      .domain([0, yMax])
+      .domain([yMin, yMax])
       .range([this.height + top, top]);
   }
 

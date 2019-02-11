@@ -52,7 +52,7 @@ describe('Stochastic Thinkerer', () => {
 
     s3.error = 0.5;
 
-    s3.updateWeights(1, 1);
+    s3.updateWeights(1);
 
     expect(c1.weight).toBe(0.25);
     expect(c2.weight).toBe(0.25);

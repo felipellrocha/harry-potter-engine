@@ -42,7 +42,21 @@ describe('Network', () => {
     expect(values).toEqual(expected)
   });
 
-  xit('backward propagates correctly', () => {
+  fit('backward propagates correctly', () => {
+    console.log(n.error);
+    /*
+    for (let neuron of n.fullForward()) {
+      console.log(neuron.id, neuron.sum, neuron.value);
+    }
+    */
+    console.log('here', n.outputs.map((neuron: any) => neuron.value));
+    console.log('here', n.outputs.map((neuron: any) => neuron.error));
+    console.log(n.outputs.map(n => ({
+      id: n.id,
+      z: n.sum,
+      error: n.error,
+      value: n.value,
+    })));
     const weights = n.connections.map(c => c.weight);
 
     const expected = [
@@ -58,9 +72,10 @@ describe('Network', () => {
     ];
 
     const error = zip(weights, expected).map(([w, e]) => e - w);
-    console.log(error);
+    //console.log(error);
 
     expect(weights).toEqual(expected);
+    expect(true).toBe(false);
   })
 });
 
