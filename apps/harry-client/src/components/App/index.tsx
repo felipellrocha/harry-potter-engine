@@ -7,7 +7,7 @@ import Canvas from 'components/graphs/Canvas';
 import Line from 'components/graphs/Line';
 import Sankey from 'components/graphs/Sankey';
 
-import { Body } from './styles.emo';
+import { Body, Block } from './styles.emo';
 import { newNetwork, Network } from '@hp/dumbledore';
 import { randomElement } from 'utils';
 import { values } from 'd3';
@@ -17,6 +17,7 @@ class App extends Component {
   state = {
     speed: 75,
     resolution: 100,
+    count: 0,
     data: [
       /*
       */
@@ -51,29 +52,6 @@ class App extends Component {
 
   timer: NodeJS.Timeout | null;
 
-  learn = () => {
-    const { data, error } = this.state;
-
-    const newData = data.map((element, index) => {
-      //console.log(`learning ${element}`);
-      this.network.learn(element.input, element.expected);
-      /*
-      console.table({
-        index: [index, '-----'],
-        ...this.network.inspect(),
-        expected: element.expected,
-      });
-      */
-      //console.log(this.network.output()[0])
-
-      this.update();
-      return {
-        ...element,
-        guess: this.network.output(),
-      };
-    });
-  }
-
   toggleRandom = () => {
     if (this.timer) {
       clearInterval(this.timer);
@@ -83,29 +61,8 @@ class App extends Component {
     }
   }
 
-  toggleLearn = () => {
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
-    } else {
-      this.timer = setInterval(this.learn, this.state.speed);
-    }
-  }
-
   update = () => {
-    const { data, error, predictions } = this.state;
-
-    /*
-    const newData = data.map((element, index) => {
-      this.network.predict(element.input);
-
-      return {
-        ...element,
-        guess: this.network.output(),
-      };
-    });
-    */
-    const newData = [...data];
+    const { count, data, error, predictions } = this.state;
 
     const state = this.network.inspect();
 
@@ -117,8 +74,18 @@ class App extends Component {
       [...error.slice(1), state.error] :
       [...error, state.error];
 
+    const newData = data.map((element, index) => {
+      const guess = this.network.predict(element.input);
+
+      return {
+        ...element,
+        guess,
+      };
+    });
+
     this.setState({
       predictions: pred,
+      count: count + 1,
       error: err,
       data: newData,
     });
@@ -128,10 +95,7 @@ class App extends Component {
     const { data } = this.state;
 
     const [_, element] = randomElement(data);
-    //console.log(`training: ${element.input} -> ${element.expected}`)
     this.network.learn(element.input, element.expected);
-    //console.log(`output: ${this.network.output().map(v => v.toFixed(4))} error: ${this.network.error.toFixed(4)}`);
-    //console.log(`trained: ${element.input} -> ${element.expected}`)
   }
 
   randomAndUpdate = () => {
@@ -142,8 +106,8 @@ class App extends Component {
   train = () => {
     console.log('training...')
     //for (let i = 0; i < 10000; i++) {
-    for (let i = 0; i < 50000; i++) this.random();
-    this.learn();
+    for (let i = 0; i < 5000; i++) this.random();
+    this.random();
     console.log('done.')
   }
 
@@ -164,8 +128,6 @@ class App extends Component {
     return (
       <div>
         <button onClick={this.train}>Train</button>
-        <button onClick={debounce(() => { this.learn() }, 200)}> Learn</button>
-        <button onClick={this.toggleLearn}>Auto Learn</button>
         <button onClick={debounce(() => { this.randomAndUpdate() }, 200)}> Random</button>
         <button onClick={this.toggleRandom}>Auto Random</button>
         <button onClick={this.test}>Test</button>
@@ -175,8 +137,7 @@ class App extends Component {
   }
 
   render() {
-    //console.log(this.network.getRepresentation());
-    const { error, predictions, data, resolution } = this.state;
+    const { count, error, predictions, data, resolution } = this.state;
 
     const heatmap = [];
 
@@ -189,43 +150,53 @@ class App extends Component {
         heatmap.push(this.network.predict(inputs)[0]);
       }
     }
-    //console.log(predictions)
 
     return (
       <Body>
-        <h1>Data</h1>
-        <Plot
-          height={300}
-          width={600}
-          data={data}
-        />
-        <this.renderButtons />
-        <h1>Network</h1>
-        <Sankey
-          height={500}
-          width={600}
-          data={this.network.getRepresentation()}
-        />
-        <this.renderButtons />
-        <h1>Error</h1>
-        <Line
-          height={300}
-          width={600}
-          data={error}
-        />
-        <this.renderButtons />
-        <h1>Predictions</h1>
-        <Line
-          height={300}
-          width={600}
-          data={predictions}
-        />
-        <this.renderButtons />
-        <h1>Canvas</h1>
-        <Canvas
-          data={heatmap}
-        />
-        <this.renderButtons />
+        <Block>
+          <div>Count: {count}</div>
+          <h1>Canvas</h1>
+          <Canvas
+            data={heatmap}
+          />
+          <this.renderButtons />
+        </Block>
+        <Block>
+          <h1>Network</h1>
+          <Sankey
+            height={300}
+            width={600}
+            data={this.network.getRepresentation()}
+          />
+          <this.renderButtons />
+        </Block>
+        <Block>
+          <h1>Error</h1>
+          <Line
+            height={300}
+            width={600}
+            data={error}
+          />
+          <this.renderButtons />
+        </Block>
+        <Block>
+          <h1>Predictions</h1>
+          <Line
+            height={300}
+            width={600}
+            data={predictions}
+          />
+          <this.renderButtons />
+        </Block>
+        <Block>
+          <h1>Data</h1>
+          <Plot
+            height={300}
+            width={600}
+            data={data}
+          />
+          <this.renderButtons />
+        </Block>
       </Body>
     );
   }

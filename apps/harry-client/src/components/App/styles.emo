@@ -1,3 +1,9 @@
 export style Body () {
   padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+export style Block() {
+  width: 50%;
 }
