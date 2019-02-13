@@ -7,25 +7,25 @@ const zip = <T1, T2>(arr1: T1[], arr2: T2[]): [T1, T2][] => {
 };
 
 describe('Network', () => {
-  const n = newNetwork([2, 3, 1], {
-    learningRate: 1,
-    withBias: false,
-  });
-
-  const setConnections = [
-    0.8, 0.4, 0.3,
-    0.2, 0.9, 0.5,
-    0.3, 0.5, 0.9,
-  ];
-
-  zip(setConnections, n.connections).map(([newWeight, connection]) => {
-    connection.weight = newWeight;
-  });
-
-  // Run the cycle once now that we set the variables correctly
-  n.learn([1, 1], [0]);
-
   it('forward propagates correctly', () => {
+    const n = newNetwork([2, 3, 1], {
+      learningRate: 1,
+      withBias: false,
+    });
+
+    const setConnections = [
+      0.8, 0.4, 0.3,
+      0.2, 0.9, 0.5,
+      0.3, 0.5, 0.9,
+    ];
+
+    zip(setConnections, n.connections).map(([newWeight, connection]) => {
+      connection.weight = newWeight;
+    });
+
+    // Run the cycle once now that we set the variables correctly
+    n.learn([1, 0], [1]);
+
     const values = n.neurons.map(n => n.value);
     // These values were calculated by hand previously, so we had
     // something to test with.
@@ -43,39 +43,51 @@ describe('Network', () => {
   });
 
   fit('backward propagates correctly', () => {
-    console.log(n.error);
-    /*
-    for (let neuron of n.fullForward()) {
-      console.log(neuron.id, neuron.sum, neuron.value);
-    }
-    */
-    console.log('here', n.outputs.map((neuron: any) => neuron.value));
-    console.log('here', n.outputs.map((neuron: any) => neuron.error));
-    console.log(n.outputs.map(n => ({
-      id: n.id,
-      z: n.sum,
-      error: n.error,
-      value: n.value,
-    })));
+    const n = newNetwork([2, 2, 1], {
+      learningRate: 1,
+    });
+
+    const setConnections = [
+      0.09753849383713645,
+      -0.017544284265774413,
+      -0.02839817013591528,
+      -0.1950664531905204,
+      -0.1405523344747659,
+      0.06353677043795256,
+      0.1,
+      0.1,
+      0.09345206239530784,
+      0.09993454172433623,
+      0.22603799387000645,
+    ];
+
+    zip(setConnections, n.connections).map(([newWeight, connection]) => {
+      connection.weight = newWeight;
+    });
+
+    // Run the cycle once now that we set the variables correctly
+    n.learn([1, 0], [1]);
+    expect(n.output()).toEqual([0.5454113802715955]);
+
     const weights = n.connections.map(c => c.weight);
 
     const expected = [
-      0.712,
-      0.3548,
-      0.2681,
-      0.112,
-      0.8548,
-      0.4681,
-      0.1162,
-      0.329,
-      0.708,
+      0.09361398864137296,
+      -0.015757016377336303,
+      -0.02839817013591528,
+      -0.1950664531905204,
+      -0.07883215903150682,
+      0.12221185611371312,
+      0.1,
+      0.1,
+      0.08952755719954436,
+      0.10172180961277434,
+      0.33874769912434444,
     ];
 
-    const error = zip(weights, expected).map(([w, e]) => e - w);
-    //console.log(error);
+    const error = zip(weights, expected).map(([w, e]) => e - (w || 0));
 
     expect(weights).toEqual(expected);
-    expect(true).toBe(false);
   })
 });
 

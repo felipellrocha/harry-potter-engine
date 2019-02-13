@@ -46,7 +46,7 @@ class App extends Component {
   };
 
   network: Network = newNetwork([2, 2, 1], {
-    learningRate: .05,
+    learningRate: .1,
   });
 
   timer: NodeJS.Timeout | null;
@@ -64,6 +64,7 @@ class App extends Component {
         expected: element.expected,
       });
       */
+      //console.log(this.network.output()[0])
 
       this.update();
       return {
@@ -94,6 +95,7 @@ class App extends Component {
   update = () => {
     const { data, error, predictions } = this.state;
 
+    /*
     const newData = data.map((element, index) => {
       this.network.predict(element.input);
 
@@ -102,6 +104,8 @@ class App extends Component {
         guess: this.network.output(),
       };
     });
+    */
+    const newData = [...data];
 
     const state = this.network.inspect();
 
@@ -172,9 +176,9 @@ class App extends Component {
 
   render() {
     //console.log(this.network.getRepresentation());
-    const { resolution } = this.state;
+    const { error, predictions, data, resolution } = this.state;
 
-    const predictions = [];
+    const heatmap = [];
 
     for (var i = 0; i < resolution; i++) {
       for (var j = 0; j < resolution; j++) {
@@ -182,9 +186,10 @@ class App extends Component {
         const x2 = j / resolution;
         const inputs = [x1, x2];
 
-        predictions.push(this.network.predict(inputs)[0]);
+        heatmap.push(this.network.predict(inputs)[0]);
       }
     }
+    //console.log(predictions)
 
     return (
       <Body>
@@ -192,7 +197,7 @@ class App extends Component {
         <Plot
           height={300}
           width={600}
-          data={this.state.data}
+          data={data}
         />
         <this.renderButtons />
         <h1>Network</h1>
@@ -202,25 +207,23 @@ class App extends Component {
           data={this.network.getRepresentation()}
         />
         <this.renderButtons />
-        {/*
-        */}
         <h1>Error</h1>
         <Line
           height={300}
           width={600}
-          data={this.state.error}
+          data={error}
         />
         <this.renderButtons />
         <h1>Predictions</h1>
         <Line
           height={300}
           width={600}
-          data={this.state.predictions}
+          data={predictions}
         />
         <this.renderButtons />
         <h1>Canvas</h1>
         <Canvas
-          data={predictions}
+          data={heatmap}
         />
         <this.renderButtons />
       </Body>

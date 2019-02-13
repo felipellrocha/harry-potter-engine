@@ -34,7 +34,7 @@ describe('Stochastic Thinkerer', () => {
 
     s3.value = 0.5;
     s3.calculateCost(1);
-    expect(s3.error).toBe(0.25);
+    expect(s3.error).toBe(-0.25);
   });
 
   it('moves error back correctly', () => {
@@ -43,8 +43,8 @@ describe('Stochastic Thinkerer', () => {
     s1.backprop();
     s2.backprop();
 
-    expect(s1.error).toBe(0.25);
-    expect(s2.error).toBe(0.25);
+    expect(s1.error).toBe(0.125);
+    expect(s2.error).toBe(0.125);
   });
 
   it('updates weights correctly', () => {

@@ -7,10 +7,10 @@ describe('Neuron', () => {
 
   describe('Squared Error', () => {
     it('calculates the error correctly', () => {
-      expect(squaredError.cost.fn(1.5)).toBe(2.25)
-      expect(squaredError.cost.fn(1)).toBe(1)
+      expect(squaredError.cost.fn(1.5)).toBe(1.125)
+      expect(squaredError.cost.fn(1)).toBe(.5)
 
-      expect(squaredError.cost.der(1.5)).toBe(3)
+      expect(squaredError.cost.der(1.5)).toBe(1.5)
     })
   });
 

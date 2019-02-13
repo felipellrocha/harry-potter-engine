@@ -6,13 +6,15 @@ export const newStochasticThinkerer: Thinkerer = {
 
     for (let [left, connection] of this.left.entries()) {
       weighted += connection.weight * left.value;
+      //console.log(`${left.id}-${connection.id}-${this.id}: ${connection.weight} * ${left.value} = ${connection.weight * left.value}`)
     }
 
     this.sum = weighted;
     this.value = this.activation.fn(weighted);
+    //console.log(this.value)
   },
   calculateCost(this: Neuron, expected: number): number {
-    this.error = this.cost.der(expected - this.value) * this.activation.der(this.sum);
+    this.error = this.cost.der(this.value - expected) * this.activation.der(this.sum);
 
 
     return this.error;
@@ -36,6 +38,8 @@ export const newStochasticThinkerer: Thinkerer = {
         * left.value;
 
       connection.weight -= update;
+      //console.log(`${left.id}<-${this.id} (${connection.id}): ${connection.weight} == ${pw} - ${update}`);
+
     }
   },
 };
