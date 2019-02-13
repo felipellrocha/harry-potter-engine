@@ -54,8 +54,8 @@ export interface Activator {
 }
 export interface Errator {
   cost: {
-    fn(expected: number): number,
-    der(expected: number): number,
+    fn(value: number, expected: number): number,
+    der(value: number, expected: number): number,
   },
 }
 

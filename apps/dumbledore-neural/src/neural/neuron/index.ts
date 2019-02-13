@@ -28,15 +28,15 @@ type Options = {
 
 export const plainError: Errator = {
   cost: {
-    fn(difference: number): number { return difference; },
-    der(difference: number): number { return difference; },
+    fn(value: number, expected: number): number { return value - expected; },
+    der(value: number, expected: number): number { return value - expected; },
   },
 }
 
 export const squaredError: Errator = {
   cost: {
-    fn(difference: number): number { return .5 * (difference ** 2); },
-    der(difference: number): number { return difference; },
+    fn(value: number, expected: number): number { return .5 * ((value - expected) ** 2); },
+    der(value: number, expected: number): number { return value - expected; },
   }
 }
 

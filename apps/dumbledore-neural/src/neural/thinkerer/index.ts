@@ -14,7 +14,7 @@ export const newStochasticThinkerer: Thinkerer = {
     //console.log(this.value)
   },
   calculateCost(this: Neuron, expected: number): number {
-    this.error = this.cost.der(this.value - expected) * this.activation.der(this.sum);
+    this.error = this.cost.der(this.value, expected) * this.activation.der(this.sum);
 
 
     return this.error;
